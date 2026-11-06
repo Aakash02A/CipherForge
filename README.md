@@ -211,8 +211,8 @@ docker compose run --rm crypto-toolkit
 
 CipherForge supports structured learning tracks tailored to your background and career goals:
 
-- 📋 **[Interactive Learner Checklist (PROGRESS.md)](PROGRESS.md):** Track your completion across all 8 levels and test your knowledge with self-assessment checkpoints.
-- 🛣️ **[Curated Learning Tracks (TRACKS.md)](TRACKS.md):**
+- 📋 **[Interactive Learner Checklist (PROGRESS.md)](docs/PROGRESS.md):** Track your completion across all 8 levels and test your knowledge with self-assessment checkpoints.
+- 🛣️ **[Curated Learning Tracks (TRACKS.md)](docs/TRACKS.md):**
   - **Track 1:** 2-Week Security Interview Sprint
   - **Track 2:** Classical to Modern Cryptography Mastery
   - **Track 3:** Applied Cybersecurity & PKI Specialist

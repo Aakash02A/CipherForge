@@ -8,35 +8,35 @@ Not everyone has time to explore all 90+ algorithms at once. Depending on your c
 *Target: Software Engineers, DevOps/SREs, and Security Engineers preparing for systems and security architecture interviews.*
 
 ### Week 1: Foundations, Symmetric Crypto & Authenticity
-- **Day 1:** [Level 02: Block Ciphers & Modes](level-02-symmetric-crypto/README.md)
+- **Day 1:** [Level 02: Block Ciphers & Modes](../level-02-symmetric-crypto/README.md)
   - Study AES structure (SPN), difference between 128/256-bit keys.
   - Deep dive: Why ECB mode leaks structure; why CBC mode requires random IVs.
-- **Day 2:** [Level 02: Stream Ciphers & Nonce Discipline](level-02-symmetric-crypto/stream-ciphers/README.md)
+- **Day 2:** [Level 02: Stream Ciphers & Nonce Discipline](../level-02-symmetric-crypto/stream-ciphers/README.md)
   - Understand keystream XOR; what happens when nonces are reused ($C_1 \oplus C_2 = P_1 \oplus P_2$).
   - ChaCha20 vs. AES-NI hardware trade-offs.
-- **Day 3:** [Level 04: Hashing & Length Extension](level-04-hashing-and-macs/README.md)
+- **Day 3:** [Level 04: Hashing & Length Extension](../level-04-hashing-and-macs/README.md)
   - Preimage vs. Collision resistance.
   - Why $H(K \parallel M)$ is broken on SHA-256; how HMAC solves it.
-- **Day 4:** [Level 04: Authenticated Encryption (AEAD)](level-04-hashing-and-macs/authenticated-encryption/README.md)
+- **Day 4:** [Level 04: Authenticated Encryption (AEAD)](../level-04-hashing-and-macs/authenticated-encryption/README.md)
   - AES-GCM and ChaCha20-Poly1305. The catastrophic consequence of GCM nonce reuse.
-- **Day 5:** [Level 06: Password Hashing Best Practices](level-06-password-and-kdf/README.md)
+- **Day 5:** [Level 06: Password Hashing Best Practices](../level-06-password-and-kdf/README.md)
   - Salting, peppering, and why SHA-256 is unacceptable for credentials.
   - Compare PBKDF2 vs. BCrypt vs. Scrypt vs. Argon2id.
 
 ### Week 2: Asymmetric Crypto, PKI & Capstone
-- **Day 6:** [Level 03: Public-Key Cryptography](level-03-asymmetric-crypto/README.md)
+- **Day 6:** [Level 03: Public-Key Cryptography](../level-03-asymmetric-crypto/README.md)
   - RSA mathematical basics; why textbook RSA ($c = m^e \pmod N$) is broken without OAEP.
   - Diffie-Hellman discrete logarithm key agreement.
-- **Day 7:** [Level 03: Elliptic Curves & X25519](level-03-asymmetric-crypto/elliptic-curves/README.md)
+- **Day 7:** [Level 03: Elliptic Curves & X25519](../level-03-asymmetric-crypto/elliptic-curves/README.md)
   - Weierstrass curves vs. Montgomery curves (Curve25519).
   - Why 256-bit ECC matches 3072-bit RSA security.
-- **Day 8:** [Level 05: Digital Signatures](level-05-signatures-and-protocols/README.md)
+- **Day 8:** [Level 05: Digital Signatures](../level-05-signatures-and-protocols/README.md)
   - ECDSA vs. Ed25519 (EdDSA).
   - The fatal ECDSA reused nonce attack (Sony PS3 key leak).
-- **Day 9:** [Level 05: TLS 1.3 Handshake](level-05-signatures-and-protocols/protocols/README.md)
+- **Day 9:** [Level 05: TLS 1.3 Handshake](../level-05-signatures-and-protocols/protocols/README.md)
   - 1-RTT flow, ephemeral Diffie-Hellman for Forward Secrecy, key schedule via HKDF.
-- **Day 10:** [Level 08: Capstone Review](level-08-capstone-project/README.md)
-  - Inspect the E2EE messaging and File Vault architecture in [`level-08-capstone-project/secure_vault.py`](level-08-capstone-project/secure_vault.py).
+- **Day 10:** [Level 08: Capstone Review](../level-08-capstone-project/README.md)
+  - Inspect the E2EE messaging and File Vault architecture in [`level-08-capstone-project/secure_vault.py`](../level-08-capstone-project/secure_vault.py).
 
 ---
 
@@ -73,7 +73,7 @@ Not everyone has time to explore all 90+ algorithms at once. Depending on your c
   5. **Sweet32 Attack:** Explaining 64-bit block collisions on 3DES and Blowfish.
   6. **Bit-Flipping Attacks:** Modifying unauthenticated CBC/CTR ciphertexts and preventing it via AEAD.
 - **Hands-On Exercises:**
-  - Run the Capstone tamper simulation in [`level-08-capstone-project/secure_vault.py`](level-08-capstone-project/secure_vault.py) to test tag failure on altered payloads.
+  - Run the Capstone tamper simulation in [`level-08-capstone-project/secure_vault.py`](../level-08-capstone-project/secure_vault.py) to test tag failure on altered payloads.
 
 ---
 

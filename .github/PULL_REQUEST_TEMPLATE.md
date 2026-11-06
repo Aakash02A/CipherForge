@@ -15,7 +15,7 @@
 - **Specification / Standard:** (e.g. NIST FIPS 197, RFC 8439, RFC 9106, IETF Draft)
 
 ## ✅ Contributor Checklist
-- [ ] I have read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
+- [ ] I have read [CONTRIBUTING.md](../CONTRIBUTING.md) and [SECURITY.md](../SECURITY.md).
 - [ ] My code includes standard docstrings explaining the mathematical basis and security parameters.
 - [ ] I have included known-answer test vectors (NIST/RFC) or added tests in `tests/`.
 - [ ] I have verified that all 90 modules import cleanly via diagnostics:

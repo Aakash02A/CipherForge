@@ -286,7 +286,7 @@ _ALL_MODULES = [
 - **Code questions:** open a GitHub Discussion
 - **Bug reports:** file an Issue using the bug-report template
 - **New algorithm ideas:** use the "New Algorithm Request" issue template
-- **Contribution workflow:** read [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Contribution workflow:** read [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 ## 📚 Resources
 
