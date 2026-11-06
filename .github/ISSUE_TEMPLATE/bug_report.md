@@ -1,35 +1,32 @@
-﻿---
+---
 name: Bug Report
-about: Report a bug or unexpected behavior in the toolkit
+about: Report a defect, mathematical discrepancy, or crash in CipherForge
 title: "[BUG] "
-labels: bug
-assignees: Aakash02A
+labels: ["bug"]
 ---
 
-## Description
-A clear and concise description of the bug.
+## 🐛 Defect Description
+A clear and concise description of what the bug is.
 
-## Steps to Reproduce
+## 🔁 Steps to Reproduce
 1. Run `python main.py`
-2. Navigate to category `...`
-3. Select algorithm `...`
-4. Enter input `...`
-5. See error
+2. Select Level: `...`
+3. Select Algorithm: `...`
+4. Provide Inputs: `...`
+5. Observe error or unexpected behavior.
 
-## Expected Behavior
-What you expected to happen.
+## 🎯 Expected Behavior
+A concise description of the expected cryptographic result or behavior according to the standard/RFC.
 
-## Actual Behavior
-What actually happened. Include the full error traceback if applicable.
-
-```
-Paste error output here
+## 💥 Actual Behavior & Traceback
+```text
+Paste terminal traceback or error message here
 ```
 
-## Environment
-- **OS:** (e.g. Windows 11, Ubuntu 22.04, macOS 14)
-- **Python version:** (e.g. 3.11.4) — run `python --version`
-- **Algorithm / Module affected:** (e.g. AES-GCM, Kyber, RSA)
+## 💻 Environment
+- **Operating System:** (e.g. Windows 11, Ubuntu 22.04, macOS Sonoma)
+- **Python Version:** (run `python --version`, e.g. Python 3.11.8)
+- **Level & Module Affected:** (e.g. Level 04: BLAKE3, Level 06: Argon2)
 
-## Additional Context
-Any other context, screenshots, or notes.
+## 📎 Additional Context & Test Vectors
+Add any other context, NIST/RFC test vectors, or paper citations demonstrating the discrepancy.

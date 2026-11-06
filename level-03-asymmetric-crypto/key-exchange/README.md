@@ -167,13 +167,15 @@ Final secret = HKDF(DH1 || DH2 || DH3)
 ## Integration
 
 ```python
-from Modules.Asymmetric_Key_Cryptography.Key_Exchange.DiffieHellman import dh_menu
-from Modules.Asymmetric_Key_Cryptography.Key_Exchange.ECDH import ecdh_menu
-from Modules.Asymmetric_Key_Cryptography.Key_Exchange.MQV import mqv_menu
-from Modules.Asymmetric_Key_Cryptography.Key_Exchange.X25519 import x25519_menu
+import importlib  # folder names contain hyphens, so load modules with importlib
+
+dh     = importlib.import_module("level-03-asymmetric-crypto.key-exchange.DiffieHellman")
+ecdh   = importlib.import_module("level-03-asymmetric-crypto.key-exchange.ECDH")
+mqv    = importlib.import_module("level-03-asymmetric-crypto.key-exchange.MQV")
+x25519 = importlib.import_module("level-03-asymmetric-crypto.key-exchange.X25519")
 
 # Launch a protocol menu
-dh_menu()
+dh.dh_menu()
 ```
 
 ---

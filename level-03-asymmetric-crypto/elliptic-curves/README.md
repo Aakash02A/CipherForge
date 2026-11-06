@@ -158,12 +158,14 @@ verification checks the Edwards-curve relation
 ## Integration
 
 ```python
-from Modules.Asymmetric_Key_Cryptography.Elliptic_Curve_Cryptography.ECDH import ecdh_menu
-from Modules.Asymmetric_Key_Cryptography.Elliptic_Curve_Cryptography.ECDSA import ecdsa_menu
-from Modules.Asymmetric_Key_Cryptography.Elliptic_Curve_Cryptography.Ed25519 import ed25519_menu
+import importlib  # folder names contain hyphens, so load modules with importlib
+
+ecdh    = importlib.import_module("level-03-asymmetric-crypto.elliptic-curves.ECDH")
+ecdsa   = importlib.import_module("level-03-asymmetric-crypto.elliptic-curves.ECDSA")
+ed25519 = importlib.import_module("level-03-asymmetric-crypto.elliptic-curves.Ed25519")
 
 # Launch a specific module menu
-ecdh_menu()
+ecdh.ecdh_menu()
 ```
 
 ---

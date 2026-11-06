@@ -114,11 +114,13 @@ HMAC-SHA256 (hex): 5d41402abc4b2a76b9719d911017c592
 
 ## Integration
 
-Import and call helpers directly:
+Launch the HMAC module via the CLI loader:
 
 ```python
-from Modules.Message_Authentication.MAC_Algorithms.HMAC import hmac_hex
-print(hmac_hex(b"key", b"message"))
+import importlib  # folder names contain hyphens, so load modules with importlib
+
+hmac = importlib.import_module("level-04-hashing-and-macs.message-authentication.HMAC")
+hmac.hmac_menu()
 ```
 
 ---

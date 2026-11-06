@@ -218,13 +218,15 @@ c = m^2 mod N
 ## Integration
 
 ```python
-from Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.rsa import rsa_menu
-from Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.ElGamal import elgamal_menu
-from Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.Paillier import paillier_menu
-from Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.Rabin import rabin_menu
+import importlib  # folder names contain hyphens, so load modules with importlib
+
+rsa     = importlib.import_module("level-03-asymmetric-crypto.public-key-encryption.rsa")
+elgamal = importlib.import_module("level-03-asymmetric-crypto.public-key-encryption.ElGamal")
+paillier = importlib.import_module("level-03-asymmetric-crypto.public-key-encryption.Paillier")
+rabin   = importlib.import_module("level-03-asymmetric-crypto.public-key-encryption.Rabin")
 
 # Launch a specific module menu
-rsa_menu()
+rsa.rsa_menu()
 ```
 
 ---

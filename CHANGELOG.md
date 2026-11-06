@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **8 progressive learning levels** (`level-01-classical-ciphers` → `level-08-capstone-project`) reorganising all 90 modules from the former `Modules/` layout, migrated with full Git history preserved (`git mv`)
+- A dedicated `README.md` per level covering core concepts, real-world use cases, known vulnerabilities/attacks, and an indexed algorithm table
+- **Level 06 — Password Hashing & KDF:** PBKDF2, BCrypt, Scrypt, Argon2, HKDF; plus the Rail Fence classical cipher in Level 01
+- **Level 08 — SecureVault capstone CLI:** authenticated file vault + E2EE messaging envelope with tamper/bit-flip detection
+- `pytest` test suite under `tests/` with per-level coverage (23 tests)
+- Community ecosystem: `.github/workflows/ci.yml` (4-version × Linux/Windows matrix), issue templates (bug / new-algorithm / test-contribution), PR template, `PROGRESS.md`, `TRACKS.md`, `LAUNCH_KIT.md`
+
+### Changed
+- Overhauled `README.md`: static shields, colour-coded Mermaid level roadmap, and a master algorithm index pointing to the new `level-XX/...` paths
+- `main.py` loads hyphenated level packages via `importlib` and adds a UTF-8 console guard so the Unicode CLI UI never crashes on legacy/piped Windows consoles
+- Rewrote `DEVELOPMENT.md` to document the level-based layout and the dynamic-import convention
+- Fixed obsolete `Modules/...` import examples in category READMEs to the runnable `importlib` form
+
 ### Planned
 - GUI frontend (Tkinter / web-based)
 - Additional PQC algorithms (BIKE, HQC)

@@ -197,13 +197,14 @@ nonce and challenge -> response s
 ## Integration
 
 ```python
-from Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.DSA import dsa_menu
-from Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.ECDSA import ecdsa_menu
-from Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.RSA_Signature import rsa_signature_menu
-from Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.Schnorr import schnorr_menu
+import importlib  # folder names contain hyphens, so load modules with importlib
+dsa_mod = importlib.import_module("level-05-signatures-and-protocols.digital-signatures.dsa")
+ecdsa_mod = importlib.import_module("level-05-signatures-and-protocols.digital-signatures.ECDSA")
+rsa_sig = importlib.import_module("level-05-signatures-and-protocols.digital-signatures.RSA_Signature")
+schnorr = importlib.import_module("level-05-signatures-and-protocols.digital-signatures.Schnorr")
 
 # Launch a specific module menu
-dsa_menu()
+dsa_mod.dsa_menu()
 ```
 
 ---

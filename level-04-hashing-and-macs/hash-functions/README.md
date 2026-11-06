@@ -119,11 +119,13 @@ SHA256 (base64): LPH...=
 
 ## Integration
 
-Import helpers directly:
+Launch the SHA-2 module via the CLI loader:
 
 ```python
-from Modules.Cryptographic_Hash_Functions.Hash_Algorithms.SHA256 import hash_text
-hash_text("hello world")
+import importlib  # folder names contain hyphens, so load modules with importlib
+
+sha2 = importlib.import_module("level-04-hashing-and-macs.hash-functions.SHA_2")
+sha2.sha2_menu()
 ```
 
 ---
