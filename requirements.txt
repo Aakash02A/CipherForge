@@ -1,15 +1,17 @@
 # ============================================================================
-# Cryptography Algorithm Toolkit - Requirements
+# CipherForge - Requirements
 # Python Version: 3.10+ (Recommended: 3.11+)
 # ============================================================================
 
 # Core Cryptographic Libraries (REQUIRED)
-cryptography>=42.0.0           # Modern cryptographic primitives
+cryptography>=42.0.0           # Modern cryptographic primitives & AEAD & ECC
 pycryptodome>=3.20.0           # Legacy algorithm implementations (AES, DES, RSA, etc.)
 blake3>=1.0.0                  # BLAKE3 hash algorithm
+bcrypt>=4.1.0                  # BCrypt password hashing (Level 06)
+argon2-cffi>=23.1.0            # Argon2 password hashing (Level 06)
 
 # Dependencies (REQUIRED - automatically installed with above)
-cffi>=2.0.0                    # C Foreign Function Interface (for cryptography)
+cffi>=2.0.0                    # C Foreign Function Interface (for cryptography & argon2)
 pycparser>=3.0                 # C parser (for cffi)
 
 # Optional Cryptographic Libraries (RECOMMENDED but not blocking)
@@ -19,7 +21,8 @@ pycparser>=3.0                 # C parser (for cffi)
 # tiger>=0.3                  # Tiger hash algorithm (requires C++ build tools on Windows)
 # whirlpool>=1.0.0            # Whirlpool hash algorithm (requires C++ build tools on Windows)
 
-# GOST modules (Magma, Kuznyechik) use local Python implementations.
+# Testing & Quality Assurance
+pytest>=8.0.0                  # Unit and integration test framework
 
 # ============================================================================
 # Installation Instructions:

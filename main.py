@@ -1,9 +1,19 @@
 import os
 import sys
+import importlib
 
+# ── Console Encoding Guard ────────────────────────────────────────────────────
+# The CLI UI relies on box-drawing glyphs and emoji. Force UTF-8 on the standard
+# streams so the toolkit never crashes on legacy Windows consoles or when output
+# is piped/redirected through a non-UTF-8 code page (Python 3.7+).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
 
-# ── Cryptography Algorithm Toolkit ───────────────────────────────────────────
-# Main entry point — connects all registered modules across 9 categories.
+# ── CipherForge ───────────────────────────────────────────────────────────────
+# Main entry point — connects all registered modules across 8 progressive levels.
 # Run: python main.py
 
 
@@ -11,12 +21,11 @@ import sys
 
 def _load(module_path: str, func_name: str):
     """Load a menu function and return the function plus any import error."""
-    import importlib
     try:
         module = importlib.import_module(module_path)
         function = getattr(module, func_name, None)
         if function is None:
-            return None, AttributeError(f"missing function {func_name}")
+            return None, AttributeError(f"missing function '{func_name}' in '{module_path}'")
         return function, None
     except Exception as exc:
         return None, exc
@@ -47,7 +56,7 @@ def _run(module_path: str, func_name: str, label: str) -> None:
         print(f"\n  [Not Available] {label}")
         print(f"  Module path : {module_path}")
         print(f"  Make sure the file exists and has no import errors.")
-        print(f"  Run: python -c \"import {module_path}\" to debug.")
+        print(f"  Run: python -c \"import importlib; importlib.import_module('{module_path}')\" to debug.")
         input("\n  Press Enter to continue...")
 
 
@@ -60,32 +69,32 @@ def _clear() -> None:
 def _banner() -> None:
     print("""
 ╔══════════════════════════════════════════════════════════════════╗
-║          🔐  Cryptography Algorithm Toolkit  🔐                  ║
+║               🔐  CipherForge Learning Toolkit  🔐                ║
 ║                                                                  ║
-║   Educational CLI covering 80+ cryptographic algorithms          ║
-║   From Classical Ciphers to Post-Quantum Cryptography            ║
+║   Interactive Progressive Mastery from Classical to Post-Quantum ║
+║   8 Leveled Modules • 90+ Algorithms • Interactive Capstone Vault║
 ╚══════════════════════════════════════════════════════════════════╝
     """)
 
 
 def _header(title: str) -> None:
-    width = 64
+    width = 66
     print(f"\n{'═' * width}")
     print(f"  {title}")
     print(f"{'═' * width}")
 
 
 def _sub_header(title: str) -> None:
-    print(f"\n  {'─' * 58}")
+    print(f"\n  {'─' * 60}")
     print(f"  {title}")
-    print(f"  {'─' * 58}")
+    print(f"  {'─' * 60}")
 
 
 def _menu_item(num: str, label: str, detail: str = "") -> None:
     if detail:
-        print(f"  {num:<4} {label:<38} {detail}")
+        print(f"  {num:<6} {label:<38} {detail}")
     else:
-        print(f"  {num:<4} {label}")
+        print(f"  {num:<6} {label}")
 
 
 def _back_option(num: str = "0") -> None:
@@ -101,12 +110,12 @@ def _get_choice(prompt: str = "\n  Select option: ") -> str:
 
 def _show_main_help() -> None:
     print("\n  Command shortcuts:")
-    print("    1-9      Open a category")
-    print("    D        Run diagnostics")
-    print("    S        Setup guide")
+    print("    1-8      Open a learning level")
+    print("    D        Run diagnostics across all modules")
+    print("    S        Setup guide / verify environment")
     print("    H / HELP Show this help")
-    print("    CLS      Clear the screen")
-    print("    Q / EXIT / QUIT  Leave the program")
+    print("    CLS      Clear screen and redraw banner")
+    print("    Q / QUIT Exit toolkit")
 
 
 def _resolve_main_choice(choice: str) -> str:
@@ -130,112 +139,91 @@ def _resolve_main_choice(choice: str) -> str:
 def _show_main_menu() -> None:
     _banner()
 
-    print("  Select a cryptography category:\n")
-    print("  ┌──────────────────────────────────────────────────────────┐")
-    _menu_item("  1 │", "Symmetric Key Cryptography",
-               "26 algorithms")
-    _menu_item("  2 │", "Asymmetric Key Cryptography",
-               "16 algorithms")
-    _menu_item("  3 │", "Cryptographic Hash Functions",
-               "9 algorithms")
-    _menu_item("  4 │", "Message Authentication (MAC)",
-               "4 algorithms")
-    _menu_item("  5 │", "Authenticated Encryption (AEAD)",
-               "4 schemes")
-    _menu_item("  6 │", "Post-Quantum Cryptography",
-               "6 algorithms")
-    _menu_item("  7 │", "Advanced Cryptography",
-               "8 schemes")
-    _menu_item("  8 │", "Classical / Historical Ciphers",
-               "5 ciphers")
-    _menu_item("  9 │", "Cryptographic Protocols",
-               "5 protocols")
-    print("  ├──────────────────────────────────────────────────────────┤")
-    _menu_item("  D │", "Run Diagnostics",
-               f"check all {len(_ALL_MODULES)} modules")
-    _menu_item("  S │", "Setup Guide",
-               "__init__.py + known issues")
-    _menu_item("  Q │", "Quit", "")
-    print("  └──────────────────────────────────────────────────────────┘")
+    print("  Select a Cryptography Learning Level:\n")
+    print("  ┌─────────────────────────────────────────────────────────────────┐")
+    _menu_item("  1 │", "Level 01: Classical & Historical Ciphers", "6 ciphers")
+    _menu_item("  2 │", "Level 02: Symmetric Key Cryptography", "26 algorithms")
+    _menu_item("  3 │", "Level 03: Asymmetric / Public Key & DH", "11 schemes")
+    _menu_item("  4 │", "Level 04: Cryptographic Hashing, MACs & AEAD", "17 schemes")
+    _menu_item("  5 │", "Level 05: Digital Signatures & Protocols", "10 protocols")
+    _menu_item("  6 │", "Level 06: Password Hashing & Key Derivation", "5 modern KDFs")
+    _menu_item("  7 │", "Level 07: Modern, Advanced & Post-Quantum", "14 schemes")
+    _menu_item("  8 │", "Level 08: Capstone Project (SecureVault CLI)", "E2EE & Vault")
+    print("  ├─────────────────────────────────────────────────────────────────┤")
+    _menu_item("  D │", "Run Diagnostics", f"check all {len(_ALL_MODULES)} modules")
+    _menu_item("  S │", "Setup Guide", "dependencies & environment")
+    _menu_item("  Q │", "Quit", "exit application")
+    print("  └─────────────────────────────────────────────────────────────────┘")
 
     total = len(_ALL_MODULES)
     print(f"\n  Registered modules: {total}")
-    print("  Categories: 9 | Symmetric: 26 | Asymmetric: 13 | Hash: 9 | MAC: 4")
-    print("  AEAD: 4 | PQC: 6 | Advanced: 8 | Classical: 5 | Protocols: 5")
-
-    print("\n  Type a number or command (H for help, M for menu, CLS to clear).")
-
-
-def _package_directories() -> list[str]:
-    return [
-        "Modules",
-        "Modules/Symmetric_Key_Cryptography",
-        "Modules/Symmetric_Key_Cryptography/Block_Ciphers",
-        "Modules/Symmetric_Key_Cryptography/Block_Cipher_Modes",
-        "Modules/Symmetric_Key_Cryptography/Stream_Ciphers",
-        "Modules/Asymmetric_Key_Cryptography",
-        "Modules/Asymmetric_Key_Cryptography/Digital_Signature_Algorithm",
-        "Modules/Asymmetric_Key_Cryptography/Elliptic_Curve_Cryptography",
-        "Modules/Asymmetric_Key_Cryptography/Key_Exchange",
-        "Modules/Asymmetric_Key_Cryptography/Public_Key_Encryption",
-        "Modules/Cryptographic_Hash_Functions",
-        "Modules/Cryptographic_Hash_Functions/Hash_Algorithms",
-        "Modules/Message_Authentication",
-        "Modules/Message_Authentication/MAC_Algorithms",
-        "Modules/Authenticated_Encryption_AEAD",
-        "Modules/Authenticated_Encryption_AEAD/Integrated_Encryption_Integrity",
-        "Modules/Post_Quantum_Cryptography",
-        "Modules/Post_Quantum_Cryptography/Key_Encapsulation_or_Encryption",
-        "Modules/Post_Quantum_Cryptography/Post_Quantum_Signature",
-        "Modules/Advanced_Cryptography",
-        "Modules/Advanced_Cryptography/Zero_Knowledge_Proofs",
-        "Modules/Advanced_Cryptography/Homomorphic_Encryption",
-        "Modules/Advanced_Cryptography/Secure_Computation",
-        "Modules/Advanced_Cryptography/Secret_Sharing",
-        "Modules/Classical_or_Historical_Ciphers",
-        "Modules/Classical_or_Historical_Ciphers/Traditional_Ciphers",
-        "Modules/Cryptographic_Protocols",
-        "Modules/Cryptographic_Protocols/Secure_Communication_Protocols",
-    ]
-
-
-def _ensure_init_files() -> tuple[int, int]:
-    created = 0
-    existing = 0
-    for folder in _package_directories():
-        init_file = os.path.join(folder, "__init__.py")
-        if os.path.exists(init_file):
-            existing += 1
-            continue
-        os.makedirs(folder, exist_ok=True)
-        with open(init_file, "w", encoding="utf-8"):
-            pass
-        created += 1
-    return created, existing
+    print("  Levels: 8 | Classical: 6 | Symmetric: 26 | Asymmetric: 11 | Hash/MAC/AEAD: 17")
+    print("  Signatures/Protocols: 10 | Password/KDF: 5 | Advanced/PQC: 14 | Capstone: 1")
+    print("\n  Type 1–8 or a command (D, S, H, CLS, Q).")
 
 
 # ═══════════════════════════════════════════════════════════════════
-# CATEGORY 1 — Symmetric Key Cryptography
+# LEVEL 1 — Classical & Historical Ciphers
+# ═══════════════════════════════════════════════════════════════════
+
+def menu_classical() -> None:
+    base = "level-01-classical-ciphers.traditional-ciphers"
+    while True:
+        _header("Level 01: Classical & Historical Ciphers")
+        print("\n  Pen-and-paper ciphers, substitution, transposition & rotor machines:")
+        _menu_item("1", "Caesar Cipher",         "Shift substitution · Brute-force demo")
+        _menu_item("2", "Vigenère Cipher",       "Polyalphabetic substitution · Kasiski test")
+        _menu_item("3", "Playfair Cipher",       "Digraph substitution · 5x5 key matrix")
+        _menu_item("4", "Hill Cipher",           "Matrix linear algebra modulo 26")
+        _menu_item("5", "Enigma Machine",        "WWII electro-mechanical rotor simulation")
+        _menu_item("6", "Rail Fence Cipher",     "Zigzag transposition · Depth analysis")
+        _back_option()
+
+        c = _get_choice()
+        if c == "1":
+            _run(f"{base}.Caesar", "caesar_menu", "Caesar Cipher")
+        elif c == "2":
+            _run(f"{base}.Vigenere", "vigenere_menu", "Vigenère Cipher")
+        elif c == "3":
+            _run(f"{base}.Playfair", "playfair_menu", "Playfair Cipher")
+        elif c == "4":
+            _run(f"{base}.Hill", "hill_menu", "Hill Cipher")
+        elif c == "5":
+            _run(f"{base}.Enigma", "enigma_menu", "Enigma Machine")
+        elif c == "6":
+            _run(f"{base}.rail_fence", "rail_fence_menu", "Rail Fence Cipher")
+        elif c == "0":
+            break
+        else:
+            print("  [Error] Invalid option.")
+
+
+# ═══════════════════════════════════════════════════════════════════
+# LEVEL 2 — Symmetric Key Cryptography
 # ═══════════════════════════════════════════════════════════════════
 
 def menu_symmetric() -> None:
+    bc = "level-02-symmetric-crypto.block-ciphers"
+    bm = "level-02-symmetric-crypto.cipher-modes"
+    sc = "level-02-symmetric-crypto.stream-ciphers"
+
     while True:
-        _header("Symmetric Key Cryptography")
+        _header("Level 02: Symmetric Key Cryptography")
         print()
-        _sub_header("1.1  Block Ciphers")
-        _menu_item("1",  "AES",                    "GCM · 256-bit")
-        _menu_item("2",  "DES",                    "CBC · 56-bit  ⚠ deprecated")
+        _sub_header("2.1  Block Ciphers")
+        _menu_item("1",  "AES",                    "GCM / CBC · 128/192/256-bit")
+        _menu_item("2",  "DES",                    "CBC · 56-bit ⚠ deprecated")
         _menu_item("3",  "3DES (Triple DES)",       "CBC · 168-bit ⚠ deprecated")
-        _menu_item("4",  "Blowfish",               "CBC · 128-bit")
-        _menu_item("5",  "Twofish",                "CBC · 256-bit")
-        _menu_item("6",  "IDEA",                   "CBC · 128-bit")
-        _menu_item("7",  "Camellia",               "CBC · 256-bit")
-        _menu_item("8",  "Serpent",                "CBC · 256-bit")
-        _menu_item("9",  "RC5",                    "CBC · 128-bit")
-        _menu_item("10", "RC6",                    "CBC · 128-bit")
-        _menu_item("11", "Magma",                  "CBC · 256-bit (GOST)")
-        _menu_item("12", "Kuznyechik",             "CBC · 256-bit (GOST/Grasshopper)")
-        _sub_header("1.2  Block Cipher Modes")
+        _menu_item("4",  "Blowfish",               "CBC · 128-bit Feistel network")
+        _menu_item("5",  "Twofish",                "CBC · 256-bit AES finalist")
+        _menu_item("6",  "IDEA",                   "CBC · 128-bit PGP legacy")
+        _menu_item("7",  "Camellia",               "CBC · 256-bit NTT / ISO standard")
+        _menu_item("8",  "Serpent",                "CBC · 256-bit AES runner-up")
+        _menu_item("9",  "RC5",                    "CBC · Variable word/round cipher")
+        _menu_item("10", "RC6",                    "CBC · AES finalist with integer multiplication")
+        _menu_item("11", "Magma",                  "CBC · GOST R 34.12-2015 64-bit")
+        _menu_item("12", "Kuznyechik",             "CBC · GOST R 34.12-2015 128-bit")
+        _sub_header("2.2  Block Cipher Modes")
         _menu_item("13", "ECB",                    "Electronic Codebook ⚠ insecure")
         _menu_item("14", "CBC",                    "Cipher Block Chaining")
         _menu_item("15", "CFB",                    "Cipher Feedback")
@@ -243,98 +231,48 @@ def menu_symmetric() -> None:
         _menu_item("17", "CTR",                    "Counter Mode")
         _menu_item("18", "GCM",                    "Galois/Counter Mode (AEAD)")
         _menu_item("19", "CCM",                    "Counter with CBC-MAC (AEAD)")
-        _menu_item("20", "XTS",                    "XEX Tweakable Codebook")
-        _sub_header("1.3  Stream Ciphers")
+        _menu_item("20", "XTS",                    "XEX Tweakable Codebook (Disk Encryption)")
+        _sub_header("2.3  Stream Ciphers")
         _menu_item("21", "RC4",                    "⚠ broken — educational only")
         _menu_item("22", "Salsa20",                "eSTREAM portfolio")
-        _menu_item("23", "ChaCha20",               "RFC 8439 · TLS 1.3")
-        _menu_item("24", "HC-128",                 "eSTREAM portfolio")
-        _menu_item("25", "Rabbit",                 "eSTREAM / RFC 4503")
-        _menu_item("26", "A5/1",                   "GSM ⚠ broken — educational only")
-        _back_option("0")
+        _menu_item("23", "ChaCha20",               "RFC 8439 · TLS 1.3 standard")
+        _menu_item("24", "HC-128",                 "eSTREAM hardware profile")
+        _menu_item("25", "Rabbit",                 "eSTREAM 128-bit high-speed cipher")
+        _menu_item("26", "A5/1",                   "GSM cellular encryption ⚠ broken")
+        _back_option()
 
         c = _get_choice()
-        # ── Block Ciphers
-        if c == "1":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.aes",
-                 "aes_menu", "AES")
-        elif c == "2":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.des",
-                 "des_menu", "DES")
-        elif c == "3":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.des3",
-                 "des3_menu", "3DES")
-        elif c == "4":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.blowfish",
-                 "blowfish_menu", "Blowfish")
-        elif c == "5":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.twofish",
-                 "twofish_menu", "Twofish")
-        elif c == "6":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.idea",
-                 "idea_menu", "IDEA")
-        elif c == "7":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.camellia",
-                 "camellia_menu", "Camellia")
-        elif c == "8":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.serpent",
-                 "serpent_menu", "Serpent")
-        elif c == "9":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.rc5",
-                 "rc5_menu", "RC5")
-        elif c == "10":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.rc6",
-                 "rc6_menu", "RC6")
-        elif c == "11":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.magma",
-                 "magma_menu", "Magma")
-        elif c == "12":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Ciphers.kuznyechik",
-                 "kuznyechik_menu", "Kuznyechik")
-        # ── Block Cipher Modes
-        elif c == "13":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.ecb",
-                 "ecb_menu", "ECB")
-        elif c == "14":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.cbc",
-                 "cbc_menu", "CBC")
-        elif c == "15":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.cfb",
-                 "cfb_menu", "CFB")
-        elif c == "16":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.ofb",
-                 "ofb_menu", "OFB")
-        elif c == "17":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.ctr",
-                 "ctr_menu", "CTR")
-        elif c == "18":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.gcm",
-                 "gcm_menu", "GCM")
-        elif c == "19":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.ccm",
-                 "ccm_menu", "CCM")
-        elif c == "20":
-            _run("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.xts",
-                 "xts_menu", "XTS")
-        # ── Stream Ciphers
-        elif c == "21":
-            _run("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.rc4",
-                 "rc4_menu", "RC4")
-        elif c == "22":
-            _run("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.salsa20",
-                 "salsa20_menu", "Salsa20")
-        elif c == "23":
-            _run("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.chacha20",
-                 "chacha20_menu", "ChaCha20")
-        elif c == "24":
-            _run("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.hc128",
-                 "hc128_menu", "HC-128")
-        elif c == "25":
-            _run("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.rabbit",
-                 "rabbit_menu", "Rabbit")
-        elif c == "26":
-            _run("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.a51",
-                 "a51_menu", "A5/1")
+        c_map = {
+            "1": (f"{bc}.aes", "aes_menu", "AES"),
+            "2": (f"{bc}.des", "des_menu", "DES"),
+            "3": (f"{bc}.des3", "des3_menu", "3DES"),
+            "4": (f"{bc}.blowfish", "blowfish_menu", "Blowfish"),
+            "5": (f"{bc}.twofish", "twofish_menu", "Twofish"),
+            "6": (f"{bc}.idea", "idea_menu", "IDEA"),
+            "7": (f"{bc}.camellia", "camellia_menu", "Camellia"),
+            "8": (f"{bc}.serpent", "serpent_menu", "Serpent"),
+            "9": (f"{bc}.rc5", "rc5_menu", "RC5"),
+            "10": (f"{bc}.rc6", "rc6_menu", "RC6"),
+            "11": (f"{bc}.magma", "magma_menu", "Magma"),
+            "12": (f"{bc}.kuznyechik", "kuznyechik_menu", "Kuznyechik"),
+            "13": (f"{bm}.Ecb", "ecb_menu", "ECB Mode"),
+            "14": (f"{bm}.Cbc", "cbc_menu", "CBC Mode"),
+            "15": (f"{bm}.Cfb", "cfb_menu", "CFB Mode"),
+            "16": (f"{bm}.Ofb", "ofb_menu", "OFB Mode"),
+            "17": (f"{bm}.Ctr", "ctr_menu", "CTR Mode"),
+            "18": (f"{bm}.Gcm", "gcm_menu", "GCM Mode"),
+            "19": (f"{bm}.Ccm", "ccm_menu", "CCM Mode"),
+            "20": (f"{bm}.Xts", "xts_menu", "XTS Mode"),
+            "21": (f"{sc}.Rc4", "rc4_menu", "RC4"),
+            "22": (f"{sc}.Salsa20", "salsa20_menu", "Salsa20"),
+            "23": (f"{sc}.Chacha20", "chacha20_menu", "ChaCha20"),
+            "24": (f"{sc}.Hc128", "hc128_menu", "HC-128"),
+            "25": (f"{sc}.Rabbit", "rabbit_menu", "Rabbit"),
+            "26": (f"{sc}.A51", "a51_menu", "A5/1"),
+        }
+        if c in c_map:
+            mod, fn, lbl = c_map[c]
+            _run(mod, fn, lbl)
         elif c == "0":
             break
         else:
@@ -342,88 +280,50 @@ def menu_symmetric() -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# CATEGORY 2 — Asymmetric Key Cryptography
+# LEVEL 3 — Asymmetric / Public Key & Key Exchange
 # ═══════════════════════════════════════════════════════════════════
 
 def menu_asymmetric() -> None:
+    pke = "level-03-asymmetric-crypto.public-key-encryption"
+    kex = "level-03-asymmetric-crypto.key-exchange"
+    ecc = "level-03-asymmetric-crypto.elliptic-curves"
+
     while True:
-        _header("Asymmetric Key Cryptography")
+        _header("Level 03: Asymmetric Key Cryptography & Key Exchange")
         print()
-        _sub_header("2.1  Public Key Encryption")
-        _menu_item("1",  "RSA",                    "PKCS#1 · OAEP / PSS")
-        _menu_item("2",  "ElGamal",                "DH-based encryption")
-        _menu_item("3",  "Rabin",                  "Factoring-based encryption")
-        _menu_item("4",  "Paillier",               "Additive homomorphic")
-        _sub_header("2.2  Key Exchange")
-        _menu_item("5",  "Diffie-Hellman (DH)",    "RFC 3526 prime group")
-        _menu_item("6",  "ECDH",                   "Elliptic Curve DH")
-        _menu_item("7",  "X25519",                 "Curve25519 key exchange")
-        _menu_item("8",  "MQV",                    "Menezes-Qu-Vanstone")
-        _sub_header("2.3  Elliptic Curve Cryptography")
-        _menu_item("9",  "ECDSA",                  "Elliptic Curve DSA")
-        _menu_item("10", "ECDH (ECC)",             "ECC key exchange")
-        _menu_item("11", "Ed25519",                "EdDSA on Curve25519")
-        _sub_header("2.4  Digital Signature Algorithms")
-        _menu_item("12", "RSA Signature",          "RSA-PSS · SHA-256")
-        _menu_item("13", "DSA",                    "FIPS 186-4")
-        _menu_item("14", "ECDSA",                  "secp256r1 / secp256k1")
-        _menu_item("15", "EdDSA",                  "Ed25519 / Ed448 · RFC 8032")
-        _menu_item("16", "Schnorr",                "Fiat-Shamir / BIP-340")
-        _back_option("0")
+        _sub_header("3.1  Public Key Encryption")
+        _menu_item("1",  "RSA",                    "OAEP padding · Factorization hardness")
+        _menu_item("2",  "ElGamal",                "Discrete logarithm hardness")
+        _menu_item("3",  "Rabin Cryptosystem",     "Quadratic residues modulo N")
+        _menu_item("4",  "Paillier",               "Additive homomorphic public key system")
+        _sub_header("3.2  Key Exchange & Agreement")
+        _menu_item("5",  "Diffie-Hellman (DH)",    "Modular exponentiation key agreement")
+        _menu_item("6",  "ECDH",                   "Elliptic Curve Diffie-Hellman")
+        _menu_item("7",  "X25519",                 "Curve25519 Montgomery ladder agreement")
+        _menu_item("8",  "MQV",                    "Menezes-Qu-Vanstone authenticated DH")
+        _sub_header("3.3  Elliptic Curve Foundations")
+        _menu_item("9",  "Curve25519 / Ed25519",   "Twisted Edwards curve operations")
+        _menu_item("10", "ECC ECDH",               "Weierstrass curve key exchange")
+        _menu_item("11", "ECC ECDSA",              "Elliptic curve point multiplication")
+        _back_option()
 
         c = _get_choice()
-        # ── Public Key Encryption
-        if c == "1":
-            _run("Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.rsa",
-                 "rsa_menu", "RSA")
-        elif c == "2":
-            _run("Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.ElGamal",
-                 "elgamal_menu", "ElGamal")
-        elif c == "3":
-            _run("Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.Rabin",
-                 "rabin_menu", "Rabin")
-        elif c == "4":
-            _run("Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.Paillier",
-                 "paillier_menu", "Paillier")
-        # ── Key Exchange
-        elif c == "5":
-            _run("Modules.Asymmetric_Key_Cryptography.Key_Exchange.DiffieHellman",
-                 "dh_menu", "Diffie-Hellman")
-        elif c == "6":
-            _run("Modules.Asymmetric_Key_Cryptography.Key_Exchange.ECDH",
-                 "ecdh_menu", "ECDH")
-        elif c == "7":
-            _run("Modules.Asymmetric_Key_Cryptography.Key_Exchange.X25519",
-                 "x25519_menu", "X25519")
-        elif c == "8":
-            _run("Modules.Asymmetric_Key_Cryptography.Key_Exchange.MQV",
-                 "mqv_menu", "MQV")
-        # ── ECC
-        elif c == "9":
-            _run("Modules.Asymmetric_Key_Cryptography.Elliptic_Curve_Cryptography.ECDSA",
-                 "ecdsa_menu", "ECDSA (ECC)")
-        elif c == "10":
-            _run("Modules.Asymmetric_Key_Cryptography.Elliptic_Curve_Cryptography.ECDH",
-                 "ecdh_menu", "ECDH (ECC)")
-        elif c == "11":
-            _run("Modules.Asymmetric_Key_Cryptography.Elliptic_Curve_Cryptography.Ed25519",
-                 "ed25519_menu", "Ed25519")
-        # ── Digital Signature Algorithms
-        elif c == "12":
-            _run("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.RSA_Signature",
-                 "rsa_signature_menu", "RSA Signature")
-        elif c == "13":
-            _run("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.DSA",
-                 "dsa_menu", "DSA")
-        elif c == "14":
-            _run("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.ECDSA",
-                 "ecdsa_menu", "ECDSA")
-        elif c == "15":
-            _run("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.EdDSA",
-                 "eddsa_menu", "EdDSA")
-        elif c == "16":
-            _run("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.Schnorr",
-                 "schnorr_menu", "Schnorr")
+        c_map = {
+            "1": (f"{pke}.rsa", "rsa_menu", "RSA Encryption"),
+            "2": (f"{pke}.ElGamal", "elgamal_menu", "ElGamal"),
+            "3": (f"{pke}.Rabin", "rabin_menu", "Rabin"),
+            "4": (f"{pke}.Paillier", "paillier_menu", "Paillier"),
+            "5": (f"{kex}.DiffieHellman", "dh_menu", "Diffie-Hellman"),
+            "6": (f"{kex}.ECDH", "ecdh_menu", "ECDH"),
+            "7": (f"{kex}.X25519", "x25519_menu", "X25519"),
+            "8": (f"{kex}.MQV", "mqv_menu", "MQV"),
+            "9": (f"{ecc}.Ed25519", "ed25519_menu", "Ed25519"),
+            "10": (f"{ecc}.ECDH", "ecdh_menu", "ECC ECDH"),
+            "11": (f"{ecc}.ECDSA", "ecdsa_menu", "ECC ECDSA"),
+        }
+        if c in c_map:
+            mod, fn, lbl = c_map[c]
+            _run(mod, fn, lbl)
         elif c == "0":
             break
         else:
@@ -431,53 +331,62 @@ def menu_asymmetric() -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# CATEGORY 3 — Cryptographic Hash Functions
+# LEVEL 4 — Cryptographic Hashing, MACs & AEAD
 # ═══════════════════════════════════════════════════════════════════
 
-def menu_hash() -> None:
+def menu_hash_mac_aead() -> None:
+    hf = "level-04-hashing-and-macs.hash-functions"
+    mc = "level-04-hashing-and-macs.message-authentication"
+    ae = "level-04-hashing-and-macs.authenticated-encryption"
+
     while True:
-        _header("Cryptographic Hash Functions")
+        _header("Level 04: Cryptographic Hashing, MACs & AEAD")
         print()
-        _sub_header("3.1  Hash Algorithms")
-        _menu_item("1",  "MD5",                    "128-bit ⚠ broken")
-        _menu_item("2",  "SHA-1",                  "160-bit ⚠ broken")
-        _menu_item("3",  "SHA-2",                  "224/256/384/512-bit")
-        _menu_item("4",  "SHA-3",                  "FIPS 202 · Keccak")
-        _menu_item("5",  "BLAKE2",                 "BLAKE2b / BLAKE2s")
-        _menu_item("6",  "BLAKE3",                 "Fastest secure hash")
-        _menu_item("7",  "RIPEMD-160",             "160-bit · Bitcoin addresses")
-        _menu_item("8",  "Whirlpool",              "512-bit · ISO/IEC 10118-3")
-        _menu_item("9",  "Tiger",                  "192-bit · Tiger/192,3")
-        _back_option("0")
+        _sub_header("4.1  Cryptographic Hash Functions")
+        _menu_item("1",  "MD5",                    "128-bit ⚠ collision-broken")
+        _menu_item("2",  "SHA-1",                  "160-bit ⚠ collision-broken")
+        _menu_item("3",  "SHA-2",                  "SHA-224 / 256 / 384 / 512")
+        _menu_item("4",  "SHA-3",                  "Keccak sponge construction")
+        _menu_item("5",  "BLAKE2",                 "BLAKE2b / BLAKE2s high-speed")
+        _menu_item("6",  "BLAKE3",                 "Tree hashing · Multi-threaded")
+        _menu_item("7",  "RIPEMD-160",             "Bitcoin legacy address hash")
+        _menu_item("8",  "Whirlpool",              "512-bit NESSIE standard")
+        _menu_item("9",  "Tiger",                  "192-bit 64-bit optimized hash")
+        _sub_header("4.2  Message Authentication Codes (MAC)")
+        _menu_item("10", "HMAC",                   "Keyed hash with SHA-256")
+        _menu_item("11", "CMAC",                   "NIST SP 800-38B cipher-based MAC")
+        _menu_item("12", "GMAC",                   "Galois Message Authentication Code")
+        _menu_item("13", "Poly1305",               "One-time authenticator modulo 2^130-5")
+        _sub_header("4.3  Authenticated Encryption (AEAD)")
+        _menu_item("14", "AES-GCM",                "Galois/Counter Mode AEAD")
+        _menu_item("15", "AES-CCM",                "Counter with CBC-MAC AEAD")
+        _menu_item("16", "ChaCha20-Poly1305",      "RFC 8439 modern AEAD standard")
+        _menu_item("17", "AES-OCB",                "Offset Codebook Mode AEAD")
+        _back_option()
 
         c = _get_choice()
-        if c == "1":
-            _run("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.MD5",
-                 "md5_menu", "MD5")
-        elif c == "2":
-            _run("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.SHA_1",
-                 "sha1_menu", "SHA-1")
-        elif c == "3":
-            _run("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.SHA_2",
-                 "sha2_menu", "SHA-2")
-        elif c == "4":
-            _run("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.SHA_3",
-                 "sha3_menu", "SHA-3")
-        elif c == "5":
-            _run("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.BLAKE2",
-                 "blake2_menu", "BLAKE2")
-        elif c == "6":
-            _run("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.BLAKE3",
-                 "blake3_menu", "BLAKE3")
-        elif c == "7":
-            _run("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.RIPEMD_160",
-                 "ripemd160_menu", "RIPEMD-160")
-        elif c == "8":
-            _run("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.Whirlpool",
-                 "whirlpool_menu", "Whirlpool")
-        elif c == "9":
-            _run("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.Tiger",
-                 "tiger_menu", "Tiger")
+        c_map = {
+            "1": (f"{hf}.MD5", "md5_menu", "MD5"),
+            "2": (f"{hf}.SHA_1", "sha1_menu", "SHA-1"),
+            "3": (f"{hf}.SHA_2", "sha2_menu", "SHA-2"),
+            "4": (f"{hf}.SHA_3", "sha3_menu", "SHA-3"),
+            "5": (f"{hf}.BLAKE2", "blake2_menu", "BLAKE2"),
+            "6": (f"{hf}.BLAKE3", "blake3_menu", "BLAKE3"),
+            "7": (f"{hf}.RIPEMD_160", "ripemd160_menu", "RIPEMD-160"),
+            "8": (f"{hf}.Whirlpool", "whirlpool_menu", "Whirlpool"),
+            "9": (f"{hf}.Tiger", "tiger_menu", "Tiger"),
+            "10": (f"{mc}.HMAC", "hmac_menu", "HMAC"),
+            "11": (f"{mc}.CMAC", "cmac_menu", "CMAC"),
+            "12": (f"{mc}.GMAC", "gmac_menu", "GMAC"),
+            "13": (f"{mc}.Poly1305", "poly1305_menu", "Poly1305"),
+            "14": (f"{ae}.aesgcm", "aesgcm_menu", "AES-GCM"),
+            "15": (f"{ae}.aesccm", "aesccm_menu", "AES-CCM"),
+            "16": (f"{ae}.chacha20poly1305", "chacha20poly1305_menu", "ChaCha20-Poly1305"),
+            "17": (f"{ae}.ocb", "ocb_menu", "AES-OCB"),
+        }
+        if c in c_map:
+            mod, fn, lbl = c_map[c]
+            _run(mod, fn, lbl)
         elif c == "0":
             break
         else:
@@ -485,33 +394,46 @@ def menu_hash() -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# CATEGORY 4 — Message Authentication
+# LEVEL 5 — Digital Signatures & Protocols
 # ═══════════════════════════════════════════════════════════════════
 
-def menu_mac() -> None:
+def menu_signatures_protocols() -> None:
+    ds = "level-05-signatures-and-protocols.digital-signatures"
+    pr = "level-05-signatures-and-protocols.protocols"
+
     while True:
-        _header("Message Authentication (MAC Algorithms)")
+        _header("Level 05: Digital Signatures & Cryptographic Protocols")
         print()
-        _sub_header("4.1  MAC Algorithms")
-        _menu_item("1",  "HMAC",                   "HMAC-SHA256 / SHA512")
-        _menu_item("2",  "CMAC",                   "AES-CMAC · NIST SP 800-38B")
-        _menu_item("3",  "GMAC",                   "GCM-based MAC")
-        _menu_item("4",  "Poly1305",               "GF(2¹³⁰-5) · RFC 8439")
-        _back_option("0")
+        _sub_header("5.1  Digital Signatures")
+        _menu_item("1",  "RSA Signatures",         "PKCS#1 v1.5 & PSS probabilistic")
+        _menu_item("2",  "DSA",                    "Digital Signature Standard (FIPS 186)")
+        _menu_item("3",  "ECDSA",                  "Elliptic Curve Digital Signature (SECP256k1)")
+        _menu_item("4",  "EdDSA (Ed25519)",        "Edwards-curve Digital Signature (RFC 8032)")
+        _menu_item("5",  "Schnorr Signatures",     "Linear signature scheme (BIP-340)")
+        _sub_header("5.2  Cryptographic Protocols")
+        _menu_item("6",  "TLS 1.3 Handshake",      "Simulated ClientHello, Key Share, Finished")
+        _menu_item("7",  "IPsec IKEv2",            "Security Associations & Diffie-Hellman")
+        _menu_item("8",  "SSH-2",                  "Key Exchange & Transport Protocol")
+        _menu_item("9",  "PGP / OpenPGP",          "Hybrid Encryption (Asymmetric + Symmetric)")
+        _menu_item("10", "Kerberos",               "Ticket Granting Service (TGS) authentication")
+        _back_option()
 
         c = _get_choice()
-        if c == "1":
-            _run("Modules.Message_Authentication.MAC_Algorithms.HMAC",
-                 "hmac_menu", "HMAC")
-        elif c == "2":
-            _run("Modules.Message_Authentication.MAC_Algorithms.CMAC",
-                 "cmac_menu", "CMAC")
-        elif c == "3":
-            _run("Modules.Message_Authentication.MAC_Algorithms.GMAC",
-                 "gmac_menu", "GMAC")
-        elif c == "4":
-            _run("Modules.Message_Authentication.MAC_Algorithms.Poly1305",
-                 "poly1305_menu", "Poly1305")
+        c_map = {
+            "1": (f"{ds}.RSA_Signature", "rsa_signature_menu", "RSA Signature"),
+            "2": (f"{ds}.dsa", "dsa_menu", "DSA"),
+            "3": (f"{ds}.ECDSA", "ecdsa_menu", "ECDSA"),
+            "4": (f"{ds}.EdDSA", "eddsa_menu", "EdDSA"),
+            "5": (f"{ds}.Schnorr", "schnorr_menu", "Schnorr Signature"),
+            "6": (f"{pr}.tls", "tls_menu", "TLS 1.3"),
+            "7": (f"{pr}.ipsec", "ipsec_menu", "IPsec"),
+            "8": (f"{pr}.ssh", "ssh_menu", "SSH-2"),
+            "9": (f"{pr}.pgp", "pgp_menu", "PGP / OpenPGP"),
+            "10": (f"{pr}.kerberos", "kerberos_menu", "Kerberos"),
+        }
+        if c in c_map:
+            mod, fn, lbl = c_map[c]
+            _run(mod, fn, lbl)
         elif c == "0":
             break
         else:
@@ -519,33 +441,33 @@ def menu_mac() -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# CATEGORY 5 — Authenticated Encryption (AEAD)
+# LEVEL 6 — Password Hashing & Key Derivation (KDF)
 # ═══════════════════════════════════════════════════════════════════
 
-def menu_aead() -> None:
+def menu_password_kdf() -> None:
+    kdf = "level-06-password-and-kdf.kdf-algorithms"
+
     while True:
-        _header("Authenticated Encryption (AEAD)")
-        print()
-        _sub_header("5.1  Integrated Encryption + Integrity")
-        _menu_item("1",  "AES-GCM",                "NIST SP 800-38D · TLS 1.3")
-        _menu_item("2",  "AES-CCM",                "NIST SP 800-38C · IoT/BLE")
-        _menu_item("3",  "ChaCha20-Poly1305",      "RFC 8439 · WireGuard/Signal")
-        _menu_item("4",  "OCB",                    "RFC 7253 · Fastest AEAD")
-        _back_option("0")
+        _header("Level 06: Password Hashing & Key Derivation")
+        print("\n  Defense against brute-force, GPU cracking & rainbow tables:")
+        _menu_item("1", "PBKDF2",                 "HMAC-SHA256 · NIST SP 800-132 · OWASP (600k rounds)")
+        _menu_item("2", "BCrypt",                 "Eksblowfish adaptive work factor · OpenBSD standard")
+        _menu_item("3", "Scrypt",                 "Memory-hard KDF (N, r, p) · ASIC/FPGA resistant")
+        _menu_item("4", "Argon2",                 "Argon2id/i/d · Password Hashing Competition winner")
+        _menu_item("5", "HKDF",                   "HMAC Extract-and-Expand · TLS 1.3 / Signal key schedule")
+        _back_option()
 
         c = _get_choice()
-        if c == "1":
-            _run("Modules.Authenticated_Encryption_AEAD.Integrated_Encryption_Integrity.aesgcm",
-                 "aesgcm_menu", "AES-GCM")
-        elif c == "2":
-            _run("Modules.Authenticated_Encryption_AEAD.Integrated_Encryption_Integrity.aesccm",
-                 "aesccm_menu", "AES-CCM")
-        elif c == "3":
-            _run("Modules.Authenticated_Encryption_AEAD.Integrated_Encryption_Integrity.chacha20poly1305",
-                 "chacha20poly1305_menu", "ChaCha20-Poly1305")
-        elif c == "4":
-            _run("Modules.Authenticated_Encryption_AEAD.Integrated_Encryption_Integrity.ocb",
-                 "ocb_menu", "OCB")
+        c_map = {
+            "1": (f"{kdf}.pbkdf2", "pbkdf2_menu", "PBKDF2"),
+            "2": (f"{kdf}.bcrypt_module", "bcrypt_menu", "BCrypt"),
+            "3": (f"{kdf}.scrypt_module", "scrypt_menu", "Scrypt"),
+            "4": (f"{kdf}.argon2_module", "argon2_menu", "Argon2"),
+            "5": (f"{kdf}.hkdf_module", "hkdf_menu", "HKDF"),
+        }
+        if c in c_map:
+            mod, fn, lbl = c_map[c]
+            _run(mod, fn, lbl)
         elif c == "0":
             break
         else:
@@ -553,42 +475,59 @@ def menu_aead() -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# CATEGORY 6 — Post-Quantum Cryptography
+# LEVEL 7 — Advanced Cryptography & Post-Quantum (PQC)
 # ═══════════════════════════════════════════════════════════════════
 
-def menu_pqc() -> None:
+def menu_advanced_pqc() -> None:
+    pqc_kem = "level-07-advanced-and-pqc.post-quantum-kems"
+    pqc_sig = "level-07-advanced-and-pqc.post-quantum-signatures"
+    he = "level-07-advanced-and-pqc.homomorphic-encryption"
+    ss = "level-07-advanced-and-pqc.secret-sharing"
+    mpc = "level-07-advanced-and-pqc.secure-computation"
+    zkp = "level-07-advanced-and-pqc.zero-knowledge-proofs"
+
     while True:
-        _header("Post-Quantum Cryptography")
+        _header("Level 07: Modern, Advanced & Post-Quantum Cryptography")
         print()
-        _sub_header("6.1  Key Encapsulation / Encryption (KEM)")
-        _menu_item("1",  "CRYSTALS-Kyber",         "NIST FIPS 203 · MLWE")
-        _menu_item("2",  "NTRU",                   "NTRU-HPS-2048-677")
-        _menu_item("3",  "Classic McEliece",       "Syndrome Decoding · 45yr proven")
-        _sub_header("6.2  Post-Quantum Signatures")
-        _menu_item("4",  "CRYSTALS-Dilithium",     "NIST FIPS 204 · MLWE+MSIS")
-        _menu_item("5",  "Falcon",                 "NIST FIPS 206 · NTRU lattice")
-        _menu_item("6",  "SPHINCS+",               "NIST FIPS 205 · Hash-based only")
-        _back_option("0")
+        _sub_header("7.1  Post-Quantum Key Encapsulation (KEMs)")
+        _menu_item("1",  "CRYSTALS-Kyber",         "ML-KEM · NIST FIPS 203 standard")
+        _menu_item("2",  "NTRU",                   "Lattice-based polynomial ring KEM")
+        _menu_item("3",  "Classic McEliece",       "Code-based Niederreiter dual scheme")
+        _sub_header("7.2  Post-Quantum Digital Signatures")
+        _menu_item("4",  "CRYSTALS-Dilithium",     "ML-DSA · NIST FIPS 204 standard")
+        _menu_item("5",  "Falcon",                 "FN-DSA · Fast-Fourier lattice signature")
+        _menu_item("6",  "SPHINCS+",               "SLH-DSA · Stateless hash-based signatures")
+        _sub_header("7.3  Privacy-Preserving & Advanced Cryptography")
+        _menu_item("7",  "Fully Homomorphic (FHE)","BFV / CKKS encrypted arithmetic")
+        _menu_item("8",  "Partially Homomorphic",  "Paillier additive encryption")
+        _menu_item("9",  "Shamir's Secret Sharing","(k, n) threshold polynomial secret sharing")
+        _menu_item("10", "Secure Multi-Party (MPC)","Yao's Garbled Circuits & Beaver triples")
+        _menu_item("11", "Oblivious Transfer (OT)","1-out-of-2 OT protocol foundation")
+        _menu_item("12", "Interactive ZKP",        "Schnorr zero-knowledge proof of knowledge")
+        _menu_item("13", "zk-SNARKs",              "Non-interactive succinct arguments (Groth16)")
+        _menu_item("14", "zk-STARKs",              "Transparent Scalable ZK arguments")
+        _back_option()
 
         c = _get_choice()
-        if c == "1":
-            _run("Modules.Post_Quantum_Cryptography.Key_Encapsulation_or_Encryption.kyber",
-                 "kyber_menu", "CRYSTALS-Kyber")
-        elif c == "2":
-            _run("Modules.Post_Quantum_Cryptography.Key_Encapsulation_or_Encryption.ntru",
-                 "ntru_menu", "NTRU")
-        elif c == "3":
-            _run("Modules.Post_Quantum_Cryptography.Key_Encapsulation_or_Encryption.mceliece",
-                 "mceliece_menu", "Classic McEliece")
-        elif c == "4":
-            _run("Modules.Post_Quantum_Cryptography.Post_Quantum_Signature.dilithium",
-                 "dilithium_menu", "CRYSTALS-Dilithium")
-        elif c == "5":
-            _run("Modules.Post_Quantum_Cryptography.Post_Quantum_Signature.falcon",
-                 "falcon_menu", "Falcon")
-        elif c == "6":
-            _run("Modules.Post_Quantum_Cryptography.Post_Quantum_Signature.sphincsplus",
-                 "sphincsplus_menu", "SPHINCS+")
+        c_map = {
+            "1": (f"{pqc_kem}.kyber", "kyber_menu", "CRYSTALS-Kyber"),
+            "2": (f"{pqc_kem}.ntru", "ntru_menu", "NTRU"),
+            "3": (f"{pqc_kem}.mceliece", "mceliece_menu", "Classic McEliece"),
+            "4": (f"{pqc_sig}.dilithium", "dilithium_menu", "CRYSTALS-Dilithium"),
+            "5": (f"{pqc_sig}.falcon", "falcon_menu", "Falcon"),
+            "6": (f"{pqc_sig}.sphincsplus", "sphincsplus_menu", "SPHINCS+"),
+            "7": (f"{he}.fhe", "fhe_menu", "FHE"),
+            "8": (f"{he}.phe", "phe_menu", "PHE"),
+            "9": (f"{ss}.Shamir_s_Secret_Sharing", "shamir_menu", "Shamir Secret Sharing"),
+            "10": (f"{mpc}.smpc", "smpc_menu", "SMPC"),
+            "11": (f"{mpc}.ot", "ot_menu", "Oblivious Transfer"),
+            "12": (f"{zkp}.zkp", "zkp_menu", "Interactive ZKP"),
+            "13": (f"{zkp}.zksnark", "zksnark_menu", "zk-SNARK"),
+            "14": (f"{zkp}.zkstark", "zkstark_menu", "zk-STARK"),
+        }
+        if c in c_map:
+            mod, fn, lbl = c_map[c]
+            _run(mod, fn, lbl)
         elif c == "0":
             break
         else:
@@ -596,239 +535,144 @@ def menu_pqc() -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# CATEGORY 7 — Advanced Cryptography
+# LEVEL 8 — Capstone Project
 # ═══════════════════════════════════════════════════════════════════
 
-def menu_advanced() -> None:
-    while True:
-        _header("Advanced Cryptography")
-        print()
-        _sub_header("7.1  Zero-Knowledge Proofs")
-        _menu_item("1",  "ZKP",                    "Schnorr sigma protocol")
-        _menu_item("2",  "zk-SNARKs",              "Groth16 · BN254 · R1CS/QAP")
-        _menu_item("3",  "zk-STARKs",              "FRI + AIR · Goldilocks field")
-        _sub_header("7.2  Homomorphic Encryption")
-        _menu_item("4",  "FHE",                    "BFV scheme · LWE-based")
-        _menu_item("5",  "PHE",                    "Paillier · ElGamal · RSA")
-        _sub_header("7.3  Secure Computation")
-        _menu_item("6",  "SMPC",                   "Shamir + BGW + Yao GC + GMW")
-        _menu_item("7",  "Oblivious Transfer",     "Naor-Pinkas · 1-of-n · IKNP")
-        _sub_header("7.4  Secret Sharing")
-        _menu_item("8",  "Shamir's Secret Sharing", "Lagrange interpolation")
-        _back_option("0")
-
-        c = _get_choice()
-        if c == "1":
-            _run("Modules.Advanced_Cryptography.Zero_Knowledge_Proofs.zkp",
-                 "zkp_menu", "ZKP")
-        elif c == "2":
-            _run("Modules.Advanced_Cryptography.Zero_Knowledge_Proofs.zksnark",
-                 "zksnark_menu", "zk-SNARKs")
-        elif c == "3":
-            _run("Modules.Advanced_Cryptography.Zero_Knowledge_Proofs.zkstark",
-                 "zkstark_menu", "zk-STARKs")
-        elif c == "4":
-            _run("Modules.Advanced_Cryptography.Homomorphic_Encryption.fhe",
-                 "fhe_menu", "FHE")
-        elif c == "5":
-            _run("Modules.Advanced_Cryptography.Homomorphic_Encryption.phe",
-                 "phe_menu", "PHE")
-        elif c == "6":
-            _run("Modules.Advanced_Cryptography.Secure_Computation.smpc",
-                 "smpc_menu", "SMPC")
-        elif c == "7":
-            _run("Modules.Advanced_Cryptography.Secure_Computation.ot",
-                 "ot_menu", "Oblivious Transfer")
-        elif c == "8":
-            _run("Modules.Advanced_Cryptography.Secret_Sharing.Shamir_s_Secret_Sharing",
-                 "sss_menu", "Shamir's Secret Sharing")
-        elif c == "0":
-            break
-        else:
-            print("  [Error] Invalid option.")
+def menu_capstone() -> None:
+    _run("level-08-capstone-project.secure_vault", "capstone_menu", "SecureVault CLI")
 
 
 # ═══════════════════════════════════════════════════════════════════
-# CATEGORY 8 — Classical / Historical Ciphers
-# ═══════════════════════════════════════════════════════════════════
-
-def menu_classical() -> None:
-    while True:
-        _header("Classical / Historical Ciphers")
-        print()
-        _sub_header("8.1  Traditional Ciphers  ⚠ All insecure — educational only")
-        _menu_item("1",  "Caesar Cipher",          "Shift cipher · ~58 BC")
-        _menu_item("2",  "Vigenère Cipher",        "Polyalphabetic · 1553")
-        _menu_item("3",  "Playfair Cipher",        "Digraph 5×5 · 1854 (WWI)")
-        _menu_item("4",  "Hill Cipher",            "Matrix / linear algebra · 1929")
-        _menu_item("5",  "Enigma Machine",         "Rotor cipher · 1923–1945")
-        _back_option("0")
-
-        c = _get_choice()
-        if c == "1":
-            _run("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Caesar",
-                 "caesar_menu", "Caesar Cipher")
-        elif c == "2":
-            _run("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Vigenere",
-                 "vigenere_menu", "Vigenère Cipher")
-        elif c == "3":
-            _run("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Playfair",
-                 "playfair_menu", "Playfair Cipher")
-        elif c == "4":
-            _run("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Hill",
-                 "hill_menu", "Hill Cipher")
-        elif c == "5":
-            _run("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Enigma",
-                 "enigma_menu", "Enigma Machine")
-        elif c == "0":
-            break
-        else:
-            print("  [Error] Invalid option.")
-
-
-# ═══════════════════════════════════════════════════════════════════
-# CATEGORY 9 — Cryptographic Protocols
-# ═══════════════════════════════════════════════════════════════════
-
-def menu_protocols() -> None:
-    while True:
-        _header("Cryptographic Protocols")
-        print()
-        _sub_header("9.1  Secure Communication Protocols")
-        _menu_item("1",  "TLS / SSL",              "TLS 1.3 · RFC 8446 · HTTPS")
-        _menu_item("2",  "IPsec",                  "IKEv2 + ESP + AH · VPN")
-        _menu_item("3",  "SSH",                    "SSH-2 · RFC 4253 · port 22")
-        _menu_item("4",  "PGP",                    "OpenPGP · RFC 4880 · email")
-        _menu_item("5",  "Kerberos",               "Kerberos v5 · RFC 4120 · SSO")
-        _back_option("0")
-
-        c = _get_choice()
-        if c == "1":
-            _run("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.tls",
-                 "tls_menu", "TLS/SSL")
-        elif c == "2":
-            _run("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.ipsec",
-                 "ipsec_menu", "IPsec")
-        elif c == "3":
-            _run("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.ssh",
-                 "ssh_menu", "SSH")
-        elif c == "4":
-            _run("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.pgp",
-                 "pgp_menu", "PGP")
-        elif c == "5":
-            _run("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.kerberos",
-                 "kerberos_menu", "Kerberos")
-        elif c == "0":
-            break
-        else:
-            print("  [Error] Invalid option.")
-
-
-# ═══════════════════════════════════════════════════════════════════
-# DIAGNOSTIC — check which modules are importable
+# DIAGNOSTICS & SETUP
 # ═══════════════════════════════════════════════════════════════════
 
 _ALL_MODULES = [
-    # Symmetric — Block Ciphers
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.aes",         "aes_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.des",         "des_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.des3",        "des3_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.blowfish",    "blowfish_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.twofish",     "twofish_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.idea",        "idea_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.camellia",    "camellia_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.serpent",     "serpent_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.rc5",         "rc5_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.rc6",         "rc6_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.magma",       "magma_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Ciphers.kuznyechik",  "kuznyechik_menu"),
-    # Symmetric — Block Cipher Modes
-    ("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.Ecb",    "ecb_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.Cbc",    "cbc_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.Cfb",    "cfb_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.Ofb",    "ofb_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.Ctr",    "ctr_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.Gcm",    "gcm_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.Ccm",    "ccm_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Block_Cipher_Modes.Xts",    "xts_menu"),
-    # Symmetric — Stream Ciphers
-    ("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.Rc4",        "rc4_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.Salsa20",    "salsa20_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.Chacha20",   "chacha20_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.Hc128",      "hc128_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.Rabbit",     "rabbit_menu"),
-    ("Modules.Symmetric_Key_Cryptography.Stream_Ciphers.A51",         "a51_menu"),
-    # Asymmetric — Public Key Encryption
-    ("Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.rsa",       "rsa_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.ElGamal",   "elgamal_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.Rabin",     "rabin_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Public_Key_Encryption.Paillier",  "paillier_menu"),
-    # Asymmetric — Key Exchange
-    ("Modules.Asymmetric_Key_Cryptography.Key_Exchange.DiffieHellman",      "dh_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Key_Exchange.ECDH",               "ecdh_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Key_Exchange.X25519",             "x25519_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Key_Exchange.MQV",                "mqv_menu"),
-    # Asymmetric — Digital Signatures
-    ("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.RSA_Signature", "rsa_signature_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.dsa",           "dsa_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.ECDSA",         "ecdsa_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.EdDSA",         "eddsa_menu"),
-    ("Modules.Asymmetric_Key_Cryptography.Digital_Signature_Algorithm.Schnorr",       "schnorr_menu"),
-    # Hash Functions
-    ("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.MD5",          "md5_menu"),
-    ("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.SHA_1",        "sha1_menu"),
-    ("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.SHA_2",        "sha2_menu"),
-    ("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.SHA_3",        "sha3_menu"),
-    ("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.BLAKE2",       "blake2_menu"),
-    ("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.BLAKE3",       "blake3_menu"),
-    ("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.RIPEMD_160",   "ripemd160_menu"),
-    ("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.Whirlpool",    "whirlpool_menu"),
-    ("Modules.Cryptographic_Hash_Functions.Hash_Algorithms.Tiger",        "tiger_menu"),
-    # MAC
-    ("Modules.Message_Authentication.MAC_Algorithms.HMAC",      "hmac_menu"),
-    ("Modules.Message_Authentication.MAC_Algorithms.CMAC",      "cmac_menu"),
-    ("Modules.Message_Authentication.MAC_Algorithms.GMAC",      "gmac_menu"),
-    ("Modules.Message_Authentication.MAC_Algorithms.Poly1305",  "poly1305_menu"),
-    # AEAD
-    ("Modules.Authenticated_Encryption_AEAD.Integrated_Encryption_Integrity.aesgcm",          "aesgcm_menu"),
-    ("Modules.Authenticated_Encryption_AEAD.Integrated_Encryption_Integrity.aesccm",          "aesccm_menu"),
-    ("Modules.Authenticated_Encryption_AEAD.Integrated_Encryption_Integrity.chacha20poly1305","chacha20poly1305_menu"),
-    ("Modules.Authenticated_Encryption_AEAD.Integrated_Encryption_Integrity.ocb",             "ocb_menu"),
-    # Post-Quantum
-    ("Modules.Post_Quantum_Cryptography.Key_Encapsulation_or_Encryption.kyber",     "kyber_menu"),
-    ("Modules.Post_Quantum_Cryptography.Key_Encapsulation_or_Encryption.ntru",      "ntru_menu"),
-    ("Modules.Post_Quantum_Cryptography.Key_Encapsulation_or_Encryption.mceliece",  "mceliece_menu"),
-    ("Modules.Post_Quantum_Cryptography.Post_Quantum_Signature.dilithium",          "dilithium_menu"),
-    ("Modules.Post_Quantum_Cryptography.Post_Quantum_Signature.falcon",             "falcon_menu"),
-    ("Modules.Post_Quantum_Cryptography.Post_Quantum_Signature.sphincsplus",        "sphincsplus_menu"),
-    # Advanced
-    ("Modules.Advanced_Cryptography.Zero_Knowledge_Proofs.zkp",                        "zkp_menu"),
-    ("Modules.Advanced_Cryptography.Zero_Knowledge_Proofs.zksnark",                    "zksnark_menu"),
-    ("Modules.Advanced_Cryptography.Zero_Knowledge_Proofs.zkstark",                    "zkstark_menu"),
-    ("Modules.Advanced_Cryptography.Homomorphic_Encryption.fhe",                       "fhe_menu"),
-    ("Modules.Advanced_Cryptography.Homomorphic_Encryption.phe",                       "phe_menu"),
-    ("Modules.Advanced_Cryptography.Secure_Computation.smpc",                          "smpc_menu"),
-    ("Modules.Advanced_Cryptography.Secure_Computation.ot",                            "ot_menu"),
-    ("Modules.Advanced_Cryptography.Secret_Sharing.Shamir_s_Secret_Sharing",           "shamir_menu"),
-    # Classical
-    ("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Caesar",    "caesar_menu"),
-    ("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Vigenere",  "vigenere_menu"),
-    ("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Playfair",  "playfair_menu"),
-    ("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Hill",      "hill_menu"),
-    ("Modules.Classical_or_Historical_Ciphers.Traditional_Ciphers.Enigma",    "enigma_menu"),
-    # Protocols
-    ("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.tls",       "tls_menu"),
-    ("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.ipsec",     "ipsec_menu"),
-    ("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.ssh",       "ssh_menu"),
-    ("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.pgp",       "pgp_menu"),
-    ("Modules.Cryptographic_Protocols.Secure_Communication_Protocols.kerberos",  "kerberos_menu"),
+    # Level 01: Classical Ciphers
+    ("level-01-classical-ciphers.traditional-ciphers.Caesar",       "caesar_menu"),
+    ("level-01-classical-ciphers.traditional-ciphers.Vigenere",     "vigenere_menu"),
+    ("level-01-classical-ciphers.traditional-ciphers.Playfair",     "playfair_menu"),
+    ("level-01-classical-ciphers.traditional-ciphers.Hill",         "hill_menu"),
+    ("level-01-classical-ciphers.traditional-ciphers.Enigma",       "enigma_menu"),
+    ("level-01-classical-ciphers.traditional-ciphers.rail_fence",   "rail_fence_menu"),
+
+    # Level 02: Symmetric — Block Ciphers
+    ("level-02-symmetric-crypto.block-ciphers.aes",                 "aes_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.des",                 "des_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.des3",                "des3_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.blowfish",            "blowfish_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.twofish",             "twofish_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.idea",                "idea_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.camellia",            "camellia_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.serpent",             "serpent_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.rc5",                 "rc5_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.rc6",                 "rc6_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.magma",               "magma_menu"),
+    ("level-02-symmetric-crypto.block-ciphers.kuznyechik",          "kuznyechik_menu"),
+
+    # Level 02: Symmetric — Block Cipher Modes
+    ("level-02-symmetric-crypto.cipher-modes.Ecb",                  "ecb_menu"),
+    ("level-02-symmetric-crypto.cipher-modes.Cbc",                  "cbc_menu"),
+    ("level-02-symmetric-crypto.cipher-modes.Cfb",                  "cfb_menu"),
+    ("level-02-symmetric-crypto.cipher-modes.Ofb",                  "ofb_menu"),
+    ("level-02-symmetric-crypto.cipher-modes.Ctr",                  "ctr_menu"),
+    ("level-02-symmetric-crypto.cipher-modes.Gcm",                  "gcm_menu"),
+    ("level-02-symmetric-crypto.cipher-modes.Ccm",                  "ccm_menu"),
+    ("level-02-symmetric-crypto.cipher-modes.Xts",                  "xts_menu"),
+
+    # Level 02: Symmetric — Stream Ciphers
+    ("level-02-symmetric-crypto.stream-ciphers.Rc4",                "rc4_menu"),
+    ("level-02-symmetric-crypto.stream-ciphers.Salsa20",            "salsa20_menu"),
+    ("level-02-symmetric-crypto.stream-ciphers.Chacha20",           "chacha20_menu"),
+    ("level-02-symmetric-crypto.stream-ciphers.Hc128",              "hc128_menu"),
+    ("level-02-symmetric-crypto.stream-ciphers.Rabbit",             "rabbit_menu"),
+    ("level-02-symmetric-crypto.stream-ciphers.A51",                "a51_menu"),
+
+    # Level 03: Asymmetric — Public Key Encryption
+    ("level-03-asymmetric-crypto.public-key-encryption.rsa",        "rsa_menu"),
+    ("level-03-asymmetric-crypto.public-key-encryption.ElGamal",    "elgamal_menu"),
+    ("level-03-asymmetric-crypto.public-key-encryption.Rabin",      "rabin_menu"),
+    ("level-03-asymmetric-crypto.public-key-encryption.Paillier",   "paillier_menu"),
+
+    # Level 03: Asymmetric — Key Exchange & Curves
+    ("level-03-asymmetric-crypto.key-exchange.DiffieHellman",       "dh_menu"),
+    ("level-03-asymmetric-crypto.key-exchange.ECDH",                "ecdh_menu"),
+    ("level-03-asymmetric-crypto.key-exchange.X25519",              "x25519_menu"),
+    ("level-03-asymmetric-crypto.key-exchange.MQV",                 "mqv_menu"),
+    ("level-03-asymmetric-crypto.elliptic-curves.Ed25519",          "ed25519_menu"),
+    ("level-03-asymmetric-crypto.elliptic-curves.ECDH",             "ecdh_menu"),
+    ("level-03-asymmetric-crypto.elliptic-curves.ECDSA",            "ecdsa_menu"),
+
+    # Level 04: Hash Functions
+    ("level-04-hashing-and-macs.hash-functions.MD5",                "md5_menu"),
+    ("level-04-hashing-and-macs.hash-functions.SHA_1",              "sha1_menu"),
+    ("level-04-hashing-and-macs.hash-functions.SHA_2",              "sha2_menu"),
+    ("level-04-hashing-and-macs.hash-functions.SHA_3",              "sha3_menu"),
+    ("level-04-hashing-and-macs.hash-functions.BLAKE2",             "blake2_menu"),
+    ("level-04-hashing-and-macs.hash-functions.BLAKE3",             "blake3_menu"),
+    ("level-04-hashing-and-macs.hash-functions.RIPEMD_160",         "ripemd160_menu"),
+    ("level-04-hashing-and-macs.hash-functions.Whirlpool",          "whirlpool_menu"),
+    ("level-04-hashing-and-macs.hash-functions.Tiger",              "tiger_menu"),
+
+    # Level 04: Message Authentication Codes (MAC)
+    ("level-04-hashing-and-macs.message-authentication.HMAC",       "hmac_menu"),
+    ("level-04-hashing-and-macs.message-authentication.CMAC",       "cmac_menu"),
+    ("level-04-hashing-and-macs.message-authentication.GMAC",       "gmac_menu"),
+    ("level-04-hashing-and-macs.message-authentication.Poly1305",   "poly1305_menu"),
+
+    # Level 04: Authenticated Encryption (AEAD)
+    ("level-04-hashing-and-macs.authenticated-encryption.aesgcm",   "aesgcm_menu"),
+    ("level-04-hashing-and-macs.authenticated-encryption.aesccm",   "aesccm_menu"),
+    ("level-04-hashing-and-macs.authenticated-encryption.chacha20poly1305", "chacha20poly1305_menu"),
+    ("level-04-hashing-and-macs.authenticated-encryption.ocb",      "ocb_menu"),
+
+    # Level 05: Digital Signatures
+    ("level-05-signatures-and-protocols.digital-signatures.RSA_Signature", "rsa_signature_menu"),
+    ("level-05-signatures-and-protocols.digital-signatures.dsa",           "dsa_menu"),
+    ("level-05-signatures-and-protocols.digital-signatures.ECDSA",         "ecdsa_menu"),
+    ("level-05-signatures-and-protocols.digital-signatures.EdDSA",         "eddsa_menu"),
+    ("level-05-signatures-and-protocols.digital-signatures.Schnorr",       "schnorr_menu"),
+
+    # Level 05: Cryptographic Protocols
+    ("level-05-signatures-and-protocols.protocols.tls",             "tls_menu"),
+    ("level-05-signatures-and-protocols.protocols.ipsec",           "ipsec_menu"),
+    ("level-05-signatures-and-protocols.protocols.ssh",             "ssh_menu"),
+    ("level-05-signatures-and-protocols.protocols.pgp",             "pgp_menu"),
+    ("level-05-signatures-and-protocols.protocols.kerberos",        "kerberos_menu"),
+
+    # Level 06: Password Hashing & Key Derivation (KDF)
+    ("level-06-password-and-kdf.kdf-algorithms.pbkdf2",             "pbkdf2_menu"),
+    ("level-06-password-and-kdf.kdf-algorithms.bcrypt_module",      "bcrypt_menu"),
+    ("level-06-password-and-kdf.kdf-algorithms.scrypt_module",      "scrypt_menu"),
+    ("level-06-password-and-kdf.kdf-algorithms.argon2_module",      "argon2_menu"),
+    ("level-06-password-and-kdf.kdf-algorithms.hkdf_module",        "hkdf_menu"),
+
+    # Level 07: Post-Quantum Cryptography (PQC)
+    ("level-07-advanced-and-pqc.post-quantum-kems.kyber",           "kyber_menu"),
+    ("level-07-advanced-and-pqc.post-quantum-kems.ntru",            "ntru_menu"),
+    ("level-07-advanced-and-pqc.post-quantum-kems.mceliece",        "mceliece_menu"),
+    ("level-07-advanced-and-pqc.post-quantum-signatures.dilithium", "dilithium_menu"),
+    ("level-07-advanced-and-pqc.post-quantum-signatures.falcon",    "falcon_menu"),
+    ("level-07-advanced-and-pqc.post-quantum-signatures.sphincsplus", "sphincsplus_menu"),
+
+    # Level 07: Modern & Advanced Privacy-Preserving
+    ("level-07-advanced-and-pqc.zero-knowledge-proofs.zkp",         "zkp_menu"),
+    ("level-07-advanced-and-pqc.zero-knowledge-proofs.zksnark",     "zksnark_menu"),
+    ("level-07-advanced-and-pqc.zero-knowledge-proofs.zkstark",     "zkstark_menu"),
+    ("level-07-advanced-and-pqc.homomorphic-encryption.fhe",        "fhe_menu"),
+    ("level-07-advanced-and-pqc.homomorphic-encryption.phe",        "phe_menu"),
+    ("level-07-advanced-and-pqc.secure-computation.smpc",           "smpc_menu"),
+    ("level-07-advanced-and-pqc.secure-computation.ot",             "ot_menu"),
+    ("level-07-advanced-and-pqc.secret-sharing.Shamir_s_Secret_Sharing", "shamir_menu"),
+
+    # Level 08: Capstone Project
+    ("level-08-capstone-project.secure_vault",                      "capstone_menu"),
 ]
 
 
-def run_diagnostics() -> None:
+def run_diagnostics(pause: bool = True) -> tuple[int, int]:
     """Check which modules import successfully."""
     _header("Module Diagnostics — Import Status Check")
-    print(f"\n  Checking {len(_ALL_MODULES)} registered modules...\n")
+    print(f"\n  Checking {len(_ALL_MODULES)} registered modules across 8 levels...\n")
 
     ok_count   = 0
     fail_count = 0
@@ -837,153 +681,95 @@ def run_diagnostics() -> None:
     for mod_path, func_name in _ALL_MODULES:
         fn, error = _load(mod_path, func_name)
         short = mod_path.split(".")[-1]
+        category = mod_path.split(".")[0]
         if fn:
-            print(f"  ✅ {short:<30}  {mod_path.split('.')[-2]}")
+            print(f"  ✅ {short:<30}  {category}")
             ok_count += 1
         else:
             print(f"  ❌ {short:<30}  {type(error).__name__}: {error}")
             fail_count += 1
-            failures.append(mod_path)
+            failures.append((mod_path, error))
 
     print(f"\n  {'─'*60}")
-    print(f"  Total    : {len(_ALL_MODULES)}")
-    print(f"  ✅ OK    : {ok_count}")
-    print(f"  ❌ Failed: {fail_count}")
+    print(f"  Total Registered : {len(_ALL_MODULES)}")
+    print(f"  ✅ OK            : {ok_count}")
+    print(f"  ❌ Failed        : {fail_count}")
 
     if failures:
         print(f"\n  Failed modules:")
-        for f in failures:
-            print(f"    • {f}")
+        for path, err in failures:
+            print(f"    • {path} ({type(err).__name__}: {err})")
         print(f"\n  Common fixes:")
         print(f"    1. Check file exists at the expected path")
-        print(f"    2. Add __init__.py to each folder (see setup guide below)")
-        print(f"    3. Install missing dependencies:")
-        print(f"       python -m pip install -r requirements.txt")
+        print(f"    2. Verify dependencies: pip install -r requirements.txt")
 
-    input("\n  Press Enter to return to menu...")
+    if pause:
+        input("\n  Press Enter to return to menu...")
+    return ok_count, fail_count
 
 
 def show_setup_guide() -> None:
-    """Auto-create missing __init__.py files and show setup instructions."""
-    _header("Setup Guide — __init__.py Files Required")
-
-    created, existing = _ensure_init_files()
-    print(f"\n  Package setup check complete: {created} created, {existing} already present.")
-
+    _header("CipherForge Setup Guide")
     print("""
-  Python needs __init__.py in every folder to treat it as a package.
-  Run this once from the project root directory:
+  1. Python Version Check:
+     Python 3.10+ is required (3.11+ recommended).
 
-  ── Quick Setup (copy-paste into terminal) ──────────────────────────
+  2. Install Core Dependencies:
+     pip install -r requirements.txt
 
-  # Create all __init__.py files
-  python -c "
-  import os
-  folders = [
-      'Modules',
-      'Modules/Symmetric_Key_Cryptography',
-      'Modules/Symmetric_Key_Cryptography/Block_Ciphers',
-      'Modules/Symmetric_Key_Cryptography/Block_Cipher_Modes',
-      'Modules/Symmetric_Key_Cryptography/Stream_Ciphers',
-      'Modules/Asymmetric_Key_Cryptography',
-      'Modules/Asymmetric_Key_Cryptography/Digital_Signature_Algorithm',
-      'Modules/Asymmetric_Key_Cryptography/Elliptic_Curve_Cryptography',
-      'Modules/Asymmetric_Key_Cryptography/Key_Exchange',
-      'Modules/Asymmetric_Key_Cryptography/Public_Key_Encryption',
-      'Modules/Cryptographic_Hash_Functions',
-      'Modules/Cryptographic_Hash_Functions/Hash_Algorithms',
-      'Modules/Message_Authentication',
-      'Modules/Message_Authentication/MAC_Algorithms',
-      'Modules/Authenticated_Encryption_AEAD',
-      'Modules/Authenticated_Encryption_AEAD/Integrated_Encryption_Integrity',
-      'Modules/Post_Quantum_Cryptography',
-      'Modules/Post_Quantum_Cryptography/Key_Encapsulation_or_Encryption',
-      'Modules/Post_Quantum_Cryptography/Post_Quantum_Signature',
-      'Modules/Advanced_Cryptography',
-      'Modules/Advanced_Cryptography/Zero_Knowledge_Proofs',
-      'Modules/Advanced_Cryptography/Homomorphic_Encryption',
-      'Modules/Advanced_Cryptography/Secure_Computation',
-      'Modules/Advanced_Cryptography/Secret_Sharing',
-      'Modules/Classical_or_Historical_Ciphers',
-      'Modules/Classical_or_Historical_Ciphers/Traditional_Ciphers',
-      'Modules/Cryptographic_Protocols',
-      'Modules/Cryptographic_Protocols/Secure_Communication_Protocols',
-  ]
-  for f in folders:
-      p = os.path.join(f, '__init__.py')
-      if not os.path.exists(p):
-          open(p, 'w').close()
-          print('Created:', p)
-      else:
-          print('Exists :', p)
-  "
+  3. Optional C-Extensions:
+     Algorithms like tiger and whirlpool require a C/C++ compiler.
+     All other 90+ algorithms run with pure-Python or pre-compiled wheels!
 
-  ── Known Issues from Your Report ───────────────────────────────────
-
-    The package structure is already present in this checkout; no manual
-    folder renames are required.
-
-  ── Dependencies ─────────────────────────────────────────────────────
-
-  python -m pip install -r requirements.txt
+  4. Run Diagnostics:
+     Press 'D' in the main menu to verify all 90 modules.
     """)
     input("  Press Enter to return to menu...")
 
 
-# ═══════════════════════════════════════════════════════════════════
-# MAIN MENU
-# ═══════════════════════════════════════════════════════════════════
+# ── Interactive Loop ──────────────────────────────────────────────────────────
 
 def main() -> None:
-    # Add project root to sys.path so imports work
-    root = os.path.dirname(os.path.abspath(__file__))
-    if root not in sys.path:
-        sys.path.insert(0, root)
-
-    _clear()
-    _show_main_menu()
-
     while True:
-        c = _resolve_main_choice(_get_choice("\n  CMD> "))
+        _show_main_menu()
+        raw_choice = _get_choice()
+        c = _resolve_main_choice(raw_choice)
 
         if c == "1":
-            menu_symmetric()
-        elif c == "2":
-            menu_asymmetric()
-        elif c == "3":
-            menu_hash()
-        elif c == "4":
-            menu_mac()
-        elif c == "5":
-            menu_aead()
-        elif c == "6":
-            menu_pqc()
-        elif c == "7":
-            menu_advanced()
-        elif c == "8":
             menu_classical()
-        elif c == "9":
-            menu_protocols()
+        elif c == "2":
+            menu_symmetric()
+        elif c == "3":
+            menu_asymmetric()
+        elif c == "4":
+            menu_hash_mac_aead()
+        elif c == "5":
+            menu_signatures_protocols()
+        elif c == "6":
+            menu_password_kdf()
+        elif c == "7":
+            menu_advanced_pqc()
+        elif c == "8":
+            menu_capstone()
         elif c == "D":
-            run_diagnostics()
+            run_diagnostics(pause=True)
         elif c == "S":
             show_setup_guide()
         elif c == "H":
             _show_main_help()
-            print("\n  Type another command at the prompt below.")
+            input("\n  Press Enter to continue...")
         elif c == "CLS":
             _clear()
-            _show_main_menu()
             continue
         elif c == "M":
-            _show_main_menu()
             continue
         elif c in ("Q", "EXIT", "QUIT"):
-            print("\n  Goodbye! 🔐\n")
+            print("\n  Thank you for learning with CipherForge! 🔐\n")
             break
         else:
-            print("  [Error] Invalid choice. Enter 1–9, D, S, H, CLS, or Q.")
-            import time; time.sleep(0.8)
+            print("  [Error] Invalid choice. Enter 1–8, D, S, H, CLS, or Q.")
+            import time
+            time.sleep(0.8)
 
 
 if __name__ == "__main__":
