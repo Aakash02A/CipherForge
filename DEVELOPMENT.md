@@ -27,11 +27,11 @@ level-04-hashing-and-macs/        hash-functions/, message-authentication/, auth
 level-05-signatures-and-protocols/ digital-signatures/, protocols/
 level-06-password-and-kdf/        kdf-algorithms/
 level-07-advanced-and-pqc/        post-quantum-kems/, post-quantum-signatures/, homomorphic-encryption/, secret-sharing/, secure-computation/, zero-knowledge-proofs/
-level-08-capstone-project/        secure_vault.py, v1-early-prototype/
+level-08-capstone-project/        secure_vault.py
 ```
 
 Every directory in a module path contains an `__init__.py` package marker, and each
-category folder ships a `README.md` documenting the algorithms it contains.
+level ships a top-level `README.md` documenting the algorithms it contains.
 
 > [!IMPORTANT]
 > **Hyphenated folder names are not valid Python identifiers**, so you cannot use
