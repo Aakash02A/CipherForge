@@ -26,11 +26,11 @@ def _shift_char(ch: str, shift: int, decrypt: bool = False) -> str:
     """Shift a single character by shift amount, preserving case."""
     if decrypt:
         shift = -shift
-    if ch.isupper():
+    if 'A' <= ch <= 'Z':
         return _ALPHABET_UPPER[(ord(ch) - ord('A') + shift) % 26]
-    elif ch.islower():
+    elif 'a' <= ch <= 'z':
         return _ALPHABET_LOWER[(ord(ch) - ord('a') + shift) % 26]
-    return ch   # non-alphabetic characters unchanged
+    return ch   # non-English / non-alphabetic characters unchanged
 
 
 def _caesar_process(text: str, shift: int, decrypt: bool = False) -> str:
@@ -215,9 +215,9 @@ def auto_solve_caesar(ciphertext: str) -> list[tuple[int, str, float]]:
 
     Returns a list of tuples: (shift, decrypted_text, chi_squared_score)
     sorted in ascending order (lowest chi-squared indicates highest probability).
+    Returns an empty list if no English letters (A-Z) are present in the ciphertext.
     """
-    letters_only = [c.upper() for c in ciphertext if c.isalpha()]
-    total_letters = len(letters_only)
+    total_letters = sum(1 for c in ciphertext if 'A' <= c.upper() <= 'Z')
     if total_letters == 0:
         return []
 
@@ -225,9 +225,10 @@ def auto_solve_caesar(ciphertext: str) -> list[tuple[int, str, float]]:
     for shift in range(1, 26):
         decrypted = _caesar_process(ciphertext, shift, decrypt=True)
         counts = {}
-        for c in decrypted.upper():
-            if c.isalpha():
-                counts[c] = counts.get(c, 0) + 1
+        for c in decrypted:
+            upper_c = c.upper()
+            if 'A' <= upper_c <= 'Z':
+                counts[upper_c] = counts.get(upper_c, 0) + 1
 
         chi_squared = 0.0
         for char, expected_pct in _ENGLISH_LETTER_FREQ.items():
@@ -253,7 +254,7 @@ def frequency_auto_solve_demo() -> None:
 
     candidates = auto_solve_caesar(text)
     if not candidates:
-        print("  [Error] No alphabetic characters found to analyze.")
+        print("  [Error] No English letters found to analyze.")
         return
 
     print(f"\n  {'Rank':<6} {'Shift':<8} {'χ² Score':<12} {'Candidate Plaintext'}")
