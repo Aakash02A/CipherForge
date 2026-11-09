@@ -26,11 +26,11 @@ def _shift_char(ch: str, shift: int, decrypt: bool = False) -> str:
     """Shift a single character by shift amount, preserving case."""
     if decrypt:
         shift = -shift
-    if ch.isupper():
+    if 'A' <= ch <= 'Z':
         return _ALPHABET_UPPER[(ord(ch) - ord('A') + shift) % 26]
-    elif ch.islower():
+    elif 'a' <= ch <= 'z':
         return _ALPHABET_LOWER[(ord(ch) - ord('a') + shift) % 26]
-    return ch   # non-alphabetic characters unchanged
+    return ch   # non-English / non-alphabetic characters unchanged
 
 
 def _caesar_process(text: str, shift: int, decrypt: bool = False) -> str:
@@ -201,6 +201,75 @@ def show_how_caesar_works() -> None:
 
 # ── menu ──────────────────────────────────────────────────────────────────────
 
+
+_ENGLISH_LETTER_FREQ = {
+    'A': 8.2, 'B': 1.5, 'C': 2.8, 'D': 4.3, 'E': 12.7, 'F': 2.2, 'G': 2.0,
+    'H': 6.1, 'I': 7.0, 'J': 0.15, 'K': 0.77, 'L': 4.0, 'M': 2.4, 'N': 6.7,
+    'O': 7.5, 'P': 1.9, 'Q': 0.095, 'R': 6.0, 'S': 6.3, 'T': 9.1, 'U': 2.8,
+    'V': 0.98, 'W': 2.4, 'X': 0.15, 'Y': 2.0, 'Z': 0.074
+}
+
+
+def auto_solve_caesar(ciphertext: str) -> list[tuple[int, str, float]]:
+    """Automatically crack Caesar cipher using Chi-squared goodness-of-fit frequency analysis.
+
+    Returns a list of tuples: (shift, decrypted_text, chi_squared_score)
+    sorted in ascending order (lowest chi-squared indicates highest probability).
+    Returns an empty list if no English letters (A-Z) are present in the ciphertext.
+    """
+    total_letters = sum(1 for c in ciphertext if 'A' <= c.upper() <= 'Z')
+    if total_letters == 0:
+        return []
+
+    candidates = []
+    for shift in range(1, 26):
+        decrypted = _caesar_process(ciphertext, shift, decrypt=True)
+        counts = {}
+        for c in decrypted:
+            upper_c = c.upper()
+            if 'A' <= upper_c <= 'Z':
+                counts[upper_c] = counts.get(upper_c, 0) + 1
+
+        chi_squared = 0.0
+        for char, expected_pct in _ENGLISH_LETTER_FREQ.items():
+            expected_count = total_letters * (expected_pct / 100.0)
+            observed_count = counts.get(char, 0)
+            chi_squared += ((observed_count - expected_count) ** 2) / expected_count
+
+        candidates.append((shift, decrypted, chi_squared))
+
+    candidates.sort(key=lambda x: x[2])
+    return candidates
+
+
+def frequency_auto_solve_demo() -> None:
+    print("\n--- Caesar Automated Frequency Analysis (Chi-Squared Auto-Solver) ---")
+    print("  Evaluates all 25 candidate shifts against standard English letter frequencies.")
+    print("  Uses Chi-squared (χ²) goodness-of-fit to rank most likely plaintexts.\n")
+
+    text = input("  Enter ciphertext to auto-crack: ").strip()
+    if not text:
+        print("  [Error] Text cannot be empty.")
+        return
+
+    candidates = auto_solve_caesar(text)
+    if not candidates:
+        print("  [Error] No English letters found to analyze.")
+        return
+
+    print(f"\n  {'Rank':<6} {'Shift':<8} {'χ² Score':<12} {'Candidate Plaintext'}")
+    print(f"  {'─'*4}   {'─'*6}   {'─'*10}   {'─'*40}")
+
+    for idx, (shift, decrypted, score) in enumerate(candidates[:5], start=1):
+        preview = decrypted if len(decrypted) <= 40 else decrypted[:37] + "..."
+        marker = " ★ (Best match)" if idx == 1 else ""
+        print(f"  {idx:<6} {shift:<8} {score:<12.2f} {preview}{marker}")
+
+    best_shift, best_text, best_score = candidates[0]
+    print(f"\n  [Top Prediction] Shift: {best_shift} (χ²: {best_score:.2f})")
+    print(f"  Plaintext: {best_text}")
+
+
 def caesar_menu() -> None:
     while True:
         print("\n--- Caesar Cipher ---")
@@ -213,8 +282,9 @@ def caesar_menu() -> None:
         print("  2. Decrypt Message")
         print("  3. Brute-Force Attack (all 25 shifts)")
         print("  4. Frequency Analysis Demo")
-        print("  5. How Caesar Cipher Works")
-        print("  6. Back")
+        print("  5. Auto-Solve via Chi-Squared Analysis (Auto-Crack)")
+        print("  6. How Caesar Cipher Works")
+        print("  7. Back")
 
         choice = input("\n  Select option: ").strip()
         if choice == "1":
@@ -226,8 +296,10 @@ def caesar_menu() -> None:
         elif choice == "4":
             frequency_analysis_demo()
         elif choice == "5":
-            show_how_caesar_works()
+            frequency_auto_solve_demo()
         elif choice == "6":
+            show_how_caesar_works()
+        elif choice == "7":
             break
         else:
-            print("  [Error] Invalid option. Please choose 1–6.")
+            print("  [Error] Invalid option. Please choose 1–7.")

@@ -35,3 +35,38 @@ def test_vigenere_cipher():
     assert encrypted != plaintext
     decrypted = vig._vigenere_process(encrypted, keyword, decrypt=True)
     assert decrypted == plaintext
+
+def test_caesar_auto_solve():
+    caesar = importlib.import_module("level-01-classical-ciphers.traditional-ciphers.Caesar")
+    plaintext = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG AND LEARNS CRYPTOGRAPHY"
+    shift = 9
+    ciphertext = caesar._caesar_process(plaintext, shift, decrypt=False)
+
+    candidates = caesar.auto_solve_caesar(ciphertext)
+    assert len(candidates) == 25
+    best_shift, recovered_text, _ = candidates[0]
+    assert best_shift == shift
+    assert recovered_text == plaintext
+
+def test_caesar_auto_solve_no_english_letters():
+    caesar = importlib.import_module("level-01-classical-ciphers.traditional-ciphers.Caesar")
+    assert caesar.auto_solve_caesar("") == []
+    assert caesar.auto_solve_caesar("12345!@#$%^&*()_+") == []
+    assert caesar.auto_solve_caesar("Привет, мир! 🚀 12345") == []
+    assert caesar.auto_solve_caesar("日本語のテキスト") == []
+
+
+def test_caesar_unicode_and_special_characters_preservation():
+    caesar = importlib.import_module("level-01-classical-ciphers.traditional-ciphers.Caesar")
+    plaintext = "DEFEND THE CASTLE AT DAWN! Привет мир! 🚀 12345"
+    shift = 7
+    ciphertext = caesar._caesar_process(plaintext, shift, decrypt=False)
+    assert "Привет мир! 🚀 12345" in ciphertext
+    decrypted = caesar._caesar_process(ciphertext, shift, decrypt=True)
+    assert decrypted == plaintext
+
+    candidates = caesar.auto_solve_caesar(ciphertext)
+    assert len(candidates) == 25
+    best_shift, recovered_text, _ = candidates[0]
+    assert best_shift == shift
+    assert recovered_text == plaintext
