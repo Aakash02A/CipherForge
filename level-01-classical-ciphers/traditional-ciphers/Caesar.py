@@ -217,7 +217,9 @@ def auto_solve_caesar(ciphertext: str) -> list[tuple[int, str, float]]:
     sorted in ascending order (lowest chi-squared indicates highest probability).
     Returns an empty list if no English letters (A-Z) are present in the ciphertext.
     """
-    total_letters = sum(1 for c in ciphertext if 'A' <= c.upper() <= 'Z')
+    total_letters = sum(
+        1 for c in ciphertext if 'A' <= c <= 'Z' or 'a' <= c <= 'z'
+    )
     if total_letters == 0:
         return []
 
@@ -226,8 +228,8 @@ def auto_solve_caesar(ciphertext: str) -> list[tuple[int, str, float]]:
         decrypted = _caesar_process(ciphertext, shift, decrypt=True)
         counts = {}
         for c in decrypted:
-            upper_c = c.upper()
-            if 'A' <= upper_c <= 'Z':
+            if 'A' <= c <= 'Z' or 'a' <= c <= 'z':
+                upper_c = c.upper()
                 counts[upper_c] = counts.get(upper_c, 0) + 1
 
         chi_squared = 0.0

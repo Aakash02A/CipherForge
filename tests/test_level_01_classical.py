@@ -54,6 +54,7 @@ def test_caesar_auto_solve_no_english_letters():
     assert caesar.auto_solve_caesar("12345!@#$%^&*()_+") == []
     assert caesar.auto_solve_caesar("Привет, мир! 🚀 12345") == []
     assert caesar.auto_solve_caesar("日本語のテキスト") == []
+    assert caesar.auto_solve_caesar("ß") == []
 
 
 def test_caesar_unicode_and_special_characters_preservation():
@@ -70,3 +71,19 @@ def test_caesar_unicode_and_special_characters_preservation():
     best_shift, recovered_text, _ = candidates[0]
     assert best_shift == shift
     assert recovered_text == plaintext
+
+
+def test_caesar_auto_solve_does_not_count_unicode_case_expansions():
+    caesar = importlib.import_module("level-01-classical-ciphers.traditional-ciphers.Caesar")
+    ciphertext = caesar._caesar_process(
+        "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG AND LEARNS CRYPTOGRAPHY",
+        9,
+    )
+
+    baseline = caesar.auto_solve_caesar(ciphertext)
+    with_sharp_s = caesar.auto_solve_caesar(ciphertext + "ß")
+
+    assert [(shift, score) for shift, _, score in with_sharp_s] == [
+        (shift, score) for shift, _, score in baseline
+    ]
+    assert all(plaintext.endswith("ß") for _, plaintext, _ in with_sharp_s)
