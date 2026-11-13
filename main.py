@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 import importlib
 
 # ── Console Encoding Guard ────────────────────────────────────────────────────
@@ -110,12 +111,15 @@ def _get_choice(prompt: str = "\n  Select option: ") -> str:
 
 def _show_main_help() -> None:
     print("\n  Command shortcuts:")
-    print("    1-8      Open a learning level")
-    print("    D        Run diagnostics across all modules")
-    print("    S        Setup guide / verify environment")
-    print("    H / HELP Show this help")
-    print("    CLS      Clear screen and redraw banner")
-    print("    Q / QUIT Exit toolkit")
+    print("    1-8            Open a learning level")
+    print("    D              Run diagnostics across all modules")
+    print("    S              Setup guide / verify environment")
+    print("    H / HELP       Show this help")
+    print("    CLS            Clear screen and redraw banner")
+    print("    Q / QUIT       Exit toolkit")
+    print("")
+    print("  CLI flags:")
+    print("    --non-interactive, -n   Run demos non-interactively for CI/curriculum showcases")
 
 
 def _resolve_main_choice(choice: str) -> str:
@@ -729,7 +733,32 @@ def show_setup_guide() -> None:
 
 # ── Interactive Loop ──────────────────────────────────────────────────────────
 
+def _run_non_interactive_demo() -> None:
+    """Run all level demos non-interactively for CI/curriculum showcases."""
+    _header("CipherForge — Non-Interactive Demo Mode")
+    print("\n  Running all level demos sequentially...\n")
+
+    base = "level-01-classical-ciphers.traditional-ciphers"
+    _sub_header("Level 01 — Caesar Cipher Auto-Solve Demo")
+    try:
+        _run(f"{base}.Caesar", "frequency_auto_solve_demo", "Caesar Frequency Auto-Solve")
+    except Exception as e:
+        print(f"\n  [Error] Caesar demo failed: {e}")
+
+    print("\n  All demos complete.")
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="CipherForge — Interactive Cryptography Learning Toolkit")
+    parser.add_argument("--non-interactive", "-n", action="store_true",
+                        help="Run demos non-interactively for CI/curriculum showcases")
+    args = parser.parse_args()
+
+    if args.non_interactive:
+        _run_non_interactive_demo()
+        return
+
     while True:
         _show_main_menu()
         raw_choice = _get_choice()
